@@ -45,8 +45,9 @@ for i in range(len(data)):
             pass_items.append(data[i])
             if data[i]['player']['id'] not in player_list:
                 player_list.append(data[i]['player']['id'])
-                player_name_list.append(data[i]['player']['name'])
+                player_name_list.append([data[i]['player']['name'],data[i]['position']['name']])
 
+print(player_name_list)
 
 pass_axes = []
 X1 = np.zeros((len(pass_items),2))
@@ -67,15 +68,13 @@ for ii in range(10):
 
         if X1[i,1] == player_list[ii]:
             if 'outcome' in pass_items[i]['pass']:
-                #plt.quiver(X1[i,0],Y1[i,0],X2[i,0]-X1[i,0],Y2[i,0]-Y1[i,0],headwidth=1.5,color='red')
                 plt.plot([X1[i,0],X2[i,0]],[Y1[i,0],Y2[i,0]],color='red')
                 plt.plot(X2[i,0],Y2[i,0],'X',color='red')
             else:
-                #plt.quiver(X1[i,0],Y1[i,0],X2[i,0]-X1[i,0],Y2[i,0]-Y1[i,0],headwidth=1.5)
                 plt.plot([X1[i,0],X2[i,0]],[Y1[i,0],Y2[i,0]],color='green')
                 plt.plot(X2[i,0],Y2[i,0],'o',color='green')
             
 
-    plt.title(player_name_list[ii])
+    plt.title(player_name_list[ii][0]+str(player_name_list[ii][1]))
 
 plt.show()
