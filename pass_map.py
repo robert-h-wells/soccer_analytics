@@ -2,35 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-#===================================================#
-def get_pitch():
-    #Pitch Outline & Centre Line
-    plt.plot([0,0],[0,90], color="black")
-    plt.plot([0,130],[90,90], color="black")
-    plt.plot([130,130],[90,0], color="black")
-    plt.plot([130,0],[0,0], color="black")
-    plt.plot([65,65],[0,90], color="black")
+import tools as tl
 
-    #Left Penalty Area
-    plt.plot([16.5,16.5],[65,25],color="black")
-    plt.plot([0,16.5],[65,65],color="black")
-    plt.plot([16.5,0],[25,25],color="black")
+# this file creates a pass map for each player
 
-    #Right Penalty Area
-    plt.plot([130,113.5],[65,65],color="black")
-    plt.plot([113.5,113.5],[65,25],color="black")
-    plt.plot([113.5,130],[25,25],color="black")
-
-    #Left 6-yard Box
-    plt.plot([0,5.5],[54,54],color="black")
-    plt.plot([5.5,5.5],[54,36],color="black")
-    plt.plot([5.5,0.5],[36,36],color="black")
-
-    #Right 6-yard Box
-    plt.plot([130,124.5],[54,54],color="black")
-    plt.plot([124.5,124.5],[54,36],color="black")
-    plt.plot([124.5,130],[36,36],color="black")
-#===================================================#
+# would like to create lists of the time ordered events, individual passing events, 
 
 
 with open('7298.json') as f:
@@ -45,9 +21,9 @@ for i in range(len(data)):
             pass_items.append(data[i])
             if data[i]['player']['id'] not in player_list:
                 player_list.append(data[i]['player']['id'])
-                player_name_list.append([data[i]['player']['name'],data[i]['position']['name']])
+                player_name_list.append([data[i]['player']['name'],data[i]['position']['name'],data[i]['team']['name']])
 
-print(player_name_list)
+print(data[100])
 
 pass_axes = []
 X1 = np.zeros((len(pass_items),2))
@@ -55,9 +31,9 @@ X2 = np.zeros((len(pass_items),2))
 Y1 = np.zeros((len(pass_items),2))  
 Y2 = np.zeros((len(pass_items),2))
 
-for ii in range(10):
+for ii in range(1):
     fig=plt.figure()
-    get_pitch()
+    tl.get_pitch()
 
     for i in range(len(pass_items)):
         pass_axes.append([pass_items[i]['location'],pass_items[i]['pass']['end_location']])
@@ -75,6 +51,6 @@ for ii in range(10):
                 plt.plot(X2[i,0],Y2[i,0],'o',color='green')
             
 
-    plt.title(player_name_list[ii][0]+str(player_name_list[ii][1]))
+    plt.title(player_name_list[ii][0]+' - '+str(player_name_list[ii][1])+' - '+str(player_name_list[ii][2]) )
 
 plt.show()
