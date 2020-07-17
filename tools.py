@@ -82,3 +82,26 @@ def get_path_score(data,poss_list):
 
     return(poss_score)
 #===============================================================================================#
+def get_indiv_score(player_list,poss_data,poss_score):
+    # individual score is the sum of the pathway points they are in
+    # also determines the number of pathways for each player 
+
+    indiv_score = []
+    for id_val, type_val in player_list:
+        score = 0
+        num_events = 0
+        for i in range(len(poss_data)):
+            event_val = 0 
+
+            for j in range(len(poss_data[i])):
+                if id_val == poss_data[i][j][0]:
+                    score += poss_score[i]
+                    event_val = 1
+
+            if event_val == 1:
+                num_events += 1
+
+        indiv_score.append([score,num_events])
+
+    return(indiv_score)
+#===============================================================================================#

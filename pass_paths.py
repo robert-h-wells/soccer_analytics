@@ -69,29 +69,18 @@ def main():
 
   # determine pathway points for each possession
   poss_score = tl.get_path_score(data,poss_list)
+  
+  # determine player score (sum of pathway score) and number of pathways they are in
+  indiv_score = tl.get_indiv_score(player_list,poss_data,poss_score)
 
-  # find player score (score of all the pathways they are in)
-  total_data = [poss_score,poss_data]
+  for i in range(len(player_list)):
+    print(player_list[i][1],indiv_score[i][0],indiv_score[i][1]) 
 
-  indiv_score = []
-  for id_val, type_val in player_list:
-    score = 0
-    for i in range(len(poss_data)):
-      if id_val in poss_data[i][0][0]:
-        score += poss_score
-
-    indiv_score.append(score)
-
-  print(indiv_score)  
-    # would like to just add the score to the player_list
-    # player_list[].insert()
 
   ## use techniques of machine learning to find the features that make the highest scoring possession pathways ##
   # sort by length, number of players, etc.
+  total_data = [poss_score,poss_data,]
 
-  #print(poss_data)
-  print(np.shape(poss_data))
-  print(len(poss_data[0]))
 
   # plot the possession pathways 
   sort_poss_list = [x for _,x in sorted(zip(poss_score,poss_list), reverse=True)]
