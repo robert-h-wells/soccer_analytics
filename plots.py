@@ -2,7 +2,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import json
-
 #===============================================================================================#
 def get_pitch():
     #Pitch Outline & Centre Line
