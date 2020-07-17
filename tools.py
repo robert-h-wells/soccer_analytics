@@ -3,13 +3,72 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 #===============================================================================================#
+def get_poss_player_list(data):
+    # from data, determine start and end data points for each possession pathway 
+    # # (just Arsenal for now)
+    # determine all players in the full match
+
+    #print(data[1]['possession'])
+
+    switch = 0
+    prev_switch = 1
+    prev_poss = data[1]['possession']
+    poss_list = []
+    player_list = []
+
+    for i in range(len(data)):
+        if data[i]['type']['id'] in [19, 35]: # Starting XI and subs        
+            if data[i]['type']['id'] == 35:
+                if data[i]['team']['name'] == 'Arsenal':
+                    for i in data[i]['tactics'].get('lineup'):
+                        player_list.append([i['player']['id'],i['player']['name']])
+            
+            elif data[i]['type']['id'] == 19:
+                if data[i]['team']['name'] == 'Arsenal':
+                    player_list.append([data[i]['substitution']['replacement']['id'], 
+                    data[i]['substitution']['replacement']['name']])
+        
+        elif data[i]['possession'] != data[i-1]['possession']:
+            switch += 1
+            if data[i-1]['possession_team']['name'] == 'Arsenal':
+                poss_list.append([prev_switch,i])
+
+            prev_switch = i
+
+    #print('switch',switch)
+
+    return(poss_list, player_list)
+#===============================================================================================#
+def get_poss_data(data,poss_list):
+    # create lists of each player and each even that occurs along each pathways
+
+    poss_data = []
+    poss_name_data = []
+    
+    for i in range(len(poss_list)):
+        poss_data.append([])
+        poss_name_data.append([])
+        new_list = [] ; new_name_list = []
+
+        for j in range(poss_list[i][0], poss_list[i][1]):
+            try:
+                new_list.append([data[j]['player']['id'],data[j]['type']['id']])
+                new_name_list.append([data[j]['player']['name'],data[j]['type']['name']])
+            except KeyError:
+                pass
+
+        poss_data[i] = new_list
+        poss_name_data[i] = new_name_list
+
+    return(poss_data, poss_name_data)
+#===============================================================================================#
 def get_path_score(data,poss_list):
     # determine result of the possession pathway and give score
 
     poss_score = len(poss_list)*[None]
     poss_score[0] = 0 ; poss_score[1] = 0
 
-    for i in range(2,len(poss_list)):
+    for i in range(len(poss_list)):
         val = poss_list[i][1]-1
 
         try:
@@ -90,16 +149,21 @@ def get_indiv_score(player_list,poss_data,poss_score):
     for id_val, type_val in player_list:
         score = 0
         num_events = 0
+        #print('id',id_val)
         for i in range(len(poss_data)):
             event_val = 0 
 
             for j in range(len(poss_data[i])):
                 if id_val == poss_data[i][j][0]:
-                    score += poss_score[i]
+                    #print('score',score,poss_score[i])
                     event_val = 1
 
             if event_val == 1:
+                score += poss_score[i]
                 num_events += 1
+                #if id_val == 23816:
+                #    print('interesting')
+                #    print(poss_data[i])
 
         indiv_score.append([score,num_events])
 
