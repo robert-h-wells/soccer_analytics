@@ -1,80 +1,85 @@
+#=========================================================================================================================#
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation
 import json
 
 import tools as tl
+import plots as pl
 
 # this file will make a list of the path routes
 # will make paths before possession switches
+#=========================================================================================================================#
 
-with open('3749052.json') as f:
-    data = json.load(f)
+def main():
 
-switch = 0
-prev_switch = 1
-prev_poss = data[1]['possession']
-poss_list = []
+  with open('3749052.json') as f:
+      data = json.load(f)
 
-# find data ranges of possession for each team
-for i in range(2,len(data)):
-  if data[i]['possession'] != data[i-1]['possession']:
-    switch += 1
-    if data[i]['possession_team']['name'] == 'Arsenal':
-      poss_list.append([prev_switch,i])
+  switch = 0
+  prev_switch = 1
+  prev_poss = data[1]['possession']
+  poss_list = []
 
-    prev_switch = i
+  # find data ranges of possession for each team
+  for i in range(2,len(data)):
+    #print(i,data[i]['possession_team']['name'],data[i]['possession'],prev_switch)
+    if data[i]['possession'] != data[i-1]['possession']:
+      switch += 1
+      if data[i-1]['possession_team']['name'] == 'Arsenal':
+        poss_list.append([prev_switch,i])
 
-print(data[101])
-print('switch',switch)
+      prev_switch = i
 
-for ii in range(4,7):
-  fig, ax=plt.subplots()
-  tl.get_pitch()
-  for i in range(poss_list[ii][0], poss_list[ii][1]):
-    print(ii,i,data[i]['type']['name'],data[i]['player']['name'],data[i]['timestamp'],data[i]['possession_team']['name'])
-    #print(data[i]) ; print('')
-    value = data[i]['type']['name']
+  print(data[101])
+  print('switch',switch)
 
-    if value == 'Pass':
-      print('pass')
-      X1 = data[i]['location'][0]
-      Y1 = data[i]['location'][1]
-      
-      X2 = data[i]['pass']['end_location'][0]
-      Y2 = data[i]['pass']['end_location'][1]
+  #for i in range(len(poss_list)):
+  #  print(poss_list[i])
 
-      if 'outcome' in data[i]['pass']:
-        plt.plot(X1,Y1,'o',color='gray')
-        plt.plot([X1,X2],[Y1,Y2],color='red')
-        plt.plot(X2,Y2,'X',color='red')
-      else:
-        plt.plot(X1,Y1,'o',color='gray')
-        plt.plot([X1,X2],[Y1,Y2],color='green')
-        plt.plot(X2,Y2,'o',color='green')
+  # create list of each player and event in each possession pathway
+  poss_data = []
+  poss_name_data = []
+  for i in range(2,len(poss_list)):
+    poss_data.append([])
+    poss_name_data.append([])
+    new_list = [] ; new_name_list = []
+
+    for j in range(poss_list[i][0], poss_list[i][1]):
+      try:
+        new_list.append([data[j]['player']['id'],data[j]['type']['id']])
+        new_name_list.append([data[j]['player']['name'],data[j]['type']['name']])
+      except KeyError:
+        pass
+
+    poss_data[i-2] = new_list
+    poss_name_data[i-2] = new_name_list
+
+
+  # determine pathway points for each possession
+  poss_score = tl.get_path_score(data,poss_list)
+  #print(poss_score)
+  #print(poss_list)
+
+  ## use techniques of machine learning to find the features that make the highest scoring possession pathways ##
+  # sort by length, number of players, etc.
+
+  # find player score (score of all the pathways they are in)
+
+
+  # plot the possession pathways 
+  sort_poss_list = [x for _,x in sorted(zip(poss_score,poss_list), reverse=True)]
+  sort_poss_score = sorted(poss_score, reverse=True)
+
+
+  for ii in range(0,3):
+    fig, ax=plt.subplots()
+    pl.get_pitch()
+    pl.plot_pass_path(data,sort_poss_list[ii][0],sort_poss_list[ii][1])
     
-    elif value == 'Dribble' or value == 'Ball Receipt*':
-      print('dribble',' ',value)
-      X1 = data[i]['location'][0]
-      Y1 = data[i]['location'][1]
-      plt.plot(X1,Y1,'D',color='blue')
+  plt.show()
+#=========================================================================================================================#
 
-    elif value == 'Shot':
-      print('shot')
-      X1 = data[i]['location'][0]
-      Y1 = data[i]['location'][1]
-      plt.plot(X1,Y1,'*',color='yellow')
 
-    elif value == 'Pressure' or value == 'Duel' or value == 'Dribbled Past':
-      pass
-    
-    else:
-      print('other ',value)
-      X1 = data[i]['location'][0]
-      Y1 = data[i]['location'][1]
-      plt.plot(X1,Y1,'o',color='orange')
-
-    plt.title(data[i]['timestamp'])
-    plt.pause(1.0)
-
-plt.show()
+if __name__ == "__main__":
+    main()
