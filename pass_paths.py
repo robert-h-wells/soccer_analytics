@@ -42,11 +42,13 @@ def main():
   sort_poss_list = [x for _,x in sorted(zip(poss_score,poss_list), reverse=True)]
   sort_poss_score = sorted(poss_score, reverse=True)
 
-  for ii in range(4,3):
+  for ii in range(3,5):
     fig, ax=plt.subplots()
     pl.get_pitch()
+    plt.ylim(100, -10)
     pl.plot_pass_path(data,sort_poss_list[ii][0],sort_poss_list[ii][1])
-    
+
+  #plt.gca().invert_yaxis()
   plt.show()
 #=========================================================================================================================#
 

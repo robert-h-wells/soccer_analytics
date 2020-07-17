@@ -82,6 +82,5 @@ def plot_pass_path(data,start_val,end_val):
             plt.title(data[i]['timestamp']+'\n '+value+' '+data[i]['player']['name'])
             plt.pause(1.20)
 
-    #if i == poss_list[ii][1]-1:
-    #  print('Next action ', data[i+1]['index'] ,data[i+1]['type']['name'], data[i+1]['player']['name'], data[i+1]['play_pattern']['name'])
+    #plt.gca().invert_yaxis()
 #===============================================================================================#
