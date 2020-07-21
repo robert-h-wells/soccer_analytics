@@ -8,8 +8,6 @@ def get_poss_player_list(data):
     # # (just Arsenal for now)
     # determine all players in the full match
 
-    #print(data[1]['possession'])
-
     switch = 0
     prev_switch = 1
     prev_poss = data[1]['possession']
@@ -35,11 +33,9 @@ def get_poss_player_list(data):
 
             prev_switch = i
 
-    #print('switch',switch)
-
     return(poss_list, player_list)
 #===============================================================================================#
-def get_poss_data(data,poss_list):
+def get_poss_data(data,poss_list,player_list):
     # create lists of each player and each even that occurs along each pathways
 
     poss_data = []
@@ -52,8 +48,13 @@ def get_poss_data(data,poss_list):
 
         for j in range(poss_list[i][0], poss_list[i][1]):
             try:
-                new_list.append([data[j]['player']['id'],data[j]['type']['id']])
-                new_name_list.append([data[j]['player']['name'],data[j]['type']['name']])
+                # make sure they are arsenal players
+                player_val = [x[0] for x in player_list]
+                if data[j]['player']['id'] in player_val: 
+                    # should check  for certain events NOT IN YET
+
+                    new_list.append([data[j]['player']['id'],data[j]['type']['id']])
+                    new_name_list.append([data[j]['player']['name'],data[j]['type']['name']])
             except KeyError:
                 pass
 
@@ -142,30 +143,32 @@ def get_path_score(data,poss_list):
     return(poss_score)
 #===============================================================================================#
 def get_indiv_score(player_list,poss_data,poss_score):
-    # individual score is the sum of the pathway points they are in
-    # also determines the number of pathways for each player 
+    # sum of pathway points = individual score, finds number of pathways involved 
+    # returns 1 or 0 for each pathway if player is in pathway
 
     indiv_score = []
+    player_in_path = [[0 for i in range(len(player_list))] for j in range(len(poss_data))]
+    val = 0
     for id_val, type_val in player_list:
         score = 0
         num_events = 0
-        #print('id',id_val)
+        
         for i in range(len(poss_data)):
             event_val = 0 
 
             for j in range(len(poss_data[i])):
                 if id_val == poss_data[i][j][0]:
-                    #print('score',score,poss_score[i])
                     event_val = 1
 
             if event_val == 1:
                 score += poss_score[i]
                 num_events += 1
-                #if id_val == 23816:
-                #    print('interesting')
-                #    print(poss_data[i])
+                player_in_path[i][val] = 1
+            elif event_val == 0:
+                player_in_path[i][val] = 0
 
         indiv_score.append([score,num_events])
+        val += 1
 
-    return(indiv_score)
+    return(indiv_score,player_in_path)
 #===============================================================================================#
