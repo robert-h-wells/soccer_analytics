@@ -5,6 +5,7 @@ import matplotlib.animation
 import json
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
+from itertools import chain
 
 import tools as tl
 import plots as pl
@@ -36,8 +37,9 @@ def main():
   ## use techniques of machine learning to find the features that make the highest scoring possession pathways ##
   # sort by length, number of players, etc.
   print(np.shape(player_in_path))
-  total_data = [i for i in zip(poss_score,poss_data,[j for j in player_in_path[j]])]
-  print(np.shape(total_data))
+  
+  #total_data = [i for i in zip(poss_score,poss_data,zip(*(chain(*player_in_path))) )]
+  #print(np.shape(total_data))
 
   nam = [x[1] for x in player_list]
 
