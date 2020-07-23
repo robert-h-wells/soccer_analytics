@@ -19,7 +19,8 @@ def get_poss_player_list(data):
             if data[i]['type']['id'] == 35:
                 if data[i]['team']['name'] == 'Arsenal':
                     for i in data[i]['tactics'].get('lineup'):
-                        player_list.append([i['player']['id'],i['player']['name']])
+                        if [i['player']['id'],i['player']['name']] not in player_list:
+                            player_list.append([i['player']['id'],i['player']['name']])
             
             elif data[i]['type']['id'] == 19:
                 if data[i]['team']['name'] == 'Arsenal':
@@ -75,7 +76,9 @@ def get_path_score(data,poss_list):
         try:
 
             if data[val+1]['possession_team']['name'] == 'Arsenal':  # possesion stays
-                if data[val+1]['play_pattern']['id'] == 2:  # caused a corner kick
+                if data[val+1]['play_pattern']['id'] == 1:    # maintaiend possession 
+                    poss_score[i] = 0
+                elif data[val+1]['play_pattern']['id'] == 2:  # caused a corner kick
                     poss_score[i] = 3
                 elif data[val+1]['play_pattern']['id'] == 3:  # caused a free kick
                     poss_score[i] = 2
@@ -83,8 +86,21 @@ def get_path_score(data,poss_list):
                     poss_score[i] = 1
                 elif data[val+1]['play_pattern']['id'] == 7:  # caused a goal kick
                     poss_score[i] = 1
+                elif data[val+1]['play_pattern']['id'] == 8:  # Arsenal keeper got ball
+                    poss_score[i] = 0
+                elif data[val+1]['pass']['outcome']['id'] in [9,74,75,76]: # incomplete pass
+                    print('Incomplete pass')
+                    poss_score[i] = 0
+
                 else:
+                    print('====================================')
                     print('NEW TYPE')
+                    print(data[val] )
+                    print('')
+                    print(data[val+1])
+                    print('')
+                    print(data[val+2])
+                    print('==================================== \n')
 
             ## ~~ Still need to look at the end result of a pathway that results from a turnover
                 
@@ -92,9 +108,11 @@ def get_path_score(data,poss_list):
                 if data[val+1]['play_pattern']['id'] == 2:  # caused a corner kick 
                     poss_score[i] = -3
                 elif data[val+1]['play_pattern']['id'] == 3:  # caused a free kick
-                    poss_score[i] = -2
+                    poss_score[i] = -3
                 elif data[val+1]['play_pattern']['id'] == 4:  # caused a throw in
                     poss_score[i] = -1
+                elif data[val+1]['play_pattern']['id'] == 6:  # caused counter
+                    poss_score[i] = -2
                 elif data[val+1]['play_pattern']['id'] == 7:  # caused a goal kick
                     poss_score[i] = -1
 
@@ -137,7 +155,9 @@ def get_path_score(data,poss_list):
         except KeyError as e:
             print('========================================================')
             print(str(e))
-            print('hmmmmmmm')
+            print('KeyError')
+            print(data[val+1]['possession_team']['name'])
+            print(data[val+1]['play_pattern']['id'])
             print('========================================================')
 
     return(poss_score)

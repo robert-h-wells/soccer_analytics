@@ -9,6 +9,8 @@ from sklearn.decomposition import NMF
 from sklearn.cluster import KMeans
 from itertools import chain
 
+from shutil import copyfile
+
 import tools as tl
 import plots as pl
 #=========================================================================================================================#
@@ -21,31 +23,35 @@ def main():
   with open('game_data/44.json') as f:
     match_data = json.load(f)
 
-  #for i in range(len(match_data)):
-  #  if match_data[i]['home_team']['home_team_name'] == 'Arsenal':
-  #    print(i,match_data[i]['match_id'])
-  #  elif match_data[i]['away_team']['away_team_name'] == 'Arsenal':
-  #    print(i,match_data[i]['match_id'])
+  for i in range(len(match_data)):
+    if match_data[i]['home_team']['home_team_name'] == 'Arsenal':
+      print(i,match_data[i]['match_id'])
+      copyfile('','game_data/')
+    elif match_data[i]['away_team']['away_team_name'] == 'Arsenal':
+      print(i,match_data[i]['match_id'])
 
 
   with open('game_data/3749052.json') as f:
     data = json.load(f)
 
-  #with open('game_data/3749079.json') as f:
-  #    data2 = json.load(f)
+  with open('game_data/3749079.json') as f:
+    data2 = json.load(f)
 
-  #data.extend(data2)
+  data.extend(data2)
 
 
   # find data ranges of possession for each team and create list of players
   poss_list, player_list = tl.get_poss_player_list(data)
+
+  for i in range(len(player_list)):
+    print(player_list[i])
 
   # create list of each player and event in each possession pathway
   poss_data, poss_name_data = tl.get_poss_data(data,poss_list,player_list)
 
   # determine pathway points for each possession
   poss_score = tl.get_path_score(data,poss_list)
-  
+
   # determine player score (sum of pathway score) and number of pathways they are in
   indiv_score, player_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
 
@@ -112,14 +118,15 @@ def main():
 
 
 
-  if 1==1:
-    # individual score vs number of pathways
-    fig, ax = plt.subplots()
-    sort_player = [x for x in sorted(zip(indiv_score,nam), reverse=True)]
-    plt.plot([x[0] for x,y in sort_player],[x[1] for x,y in sort_player],'.')
-    #plt.xticks([x[0] for x,y in sort_player],labels=[y for x,y in sort_player],rotation=70)
-    plt.xlabel('Score') ; plt.ylabel('Num Pathways')
-    plt.title('Player Score and Number of Pathways Involved ')
+  if 1==0:
+    if 1==0:
+      # individual score vs number of pathways
+      fig, ax = plt.subplots()
+      sort_player = [x for x in sorted(zip(indiv_score,nam), reverse=True)]
+      plt.plot([x[0] for x,y in sort_player],[x[1] for x,y in sort_player],'.')
+      #plt.xticks([x[0] for x,y in sort_player],labels=[y for x,y in sort_player],rotation=70)
+      plt.xlabel('Score') ; plt.ylabel('Num Pathways')
+      plt.title('Player Score and Number of Pathways Involved ')
 
     # score of each pathway vs. length of pathway
     fig, ax = plt.subplots(2,1)
