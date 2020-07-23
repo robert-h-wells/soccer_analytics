@@ -23,12 +23,17 @@ def main():
   with open('game_data/44.json') as f:
     match_data = json.load(f)
 
-  for i in range(len(match_data)):
-    if match_data[i]['home_team']['home_team_name'] == 'Arsenal':
-      print(i,match_data[i]['match_id'])
-      copyfile('','game_data/')
-    elif match_data[i]['away_team']['away_team_name'] == 'Arsenal':
-      print(i,match_data[i]['match_id'])
+  #if files have not been copied to correct directory
+  if 1==0:
+    for i in range(len(match_data)):
+      if match_data[i]['home_team']['home_team_name'] == 'Arsenal':
+        src = str('../../../Downloads/open-data-master/open-data-master/data/events/'+str(match_data[i]['match_id'])+'.json')
+        dst = str('game_data/'+str(match_data[i]['match_id'])+'.json')
+        copyfile(src,dst)
+      elif match_data[i]['away_team']['away_team_name'] == 'Arsenal':
+        src = str('../../../Downloads/open-data-master/open-data-master/data/events/'+str(match_data[i]['match_id'])+'.json')
+        dst = str('game_data/'+str(match_data[i]['match_id'])+'.json')
+        copyfile(src,dst)
 
 
   with open('game_data/3749052.json') as f:
