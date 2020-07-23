@@ -147,7 +147,7 @@ def get_indiv_score(player_list,poss_data,poss_score):
     # returns 1 or 0 for each pathway if player is in pathway
 
     indiv_score = []
-    player_in_path = [[0 for i in range(len(player_list))] for j in range(len(poss_data))]
+    player_in_path = [[0 for i in range(len(poss_data))] for j in range(len(player_list))]
     val = 0
     for id_val, type_val in player_list:
         score = 0
@@ -163,9 +163,9 @@ def get_indiv_score(player_list,poss_data,poss_score):
             if event_val == 1:
                 score += poss_score[i]
                 num_events += 1
-                player_in_path[i][val] = 1
+                player_in_path[val][i] = 1
             elif event_val == 0:
-                player_in_path[i][val] = 0
+                player_in_path[val][i] = 0
 
         indiv_score.append([score,num_events])
         val += 1

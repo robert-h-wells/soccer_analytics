@@ -80,7 +80,7 @@ def plot_pass_path(data,start_val,end_val):
 
         if type_val == 1:
             plt.title(data[i]['timestamp']+'\n '+value+' '+data[i]['player']['name'])
-            plt.pause(1.20)
+            plt.pause(2.0)
 
     #plt.gca().invert_yaxis()
 #===============================================================================================#
