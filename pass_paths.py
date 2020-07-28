@@ -35,21 +35,25 @@ def main():
         dst = str('game_data/'+str(match_data[i]['match_id'])+'.json')
         copyfile(src,dst)
 
+  data = []
+  #for i in range(len(match_data)):
+  for i in range(5):
+    with open(str('game_data/'+str(match_data[i]['match_id'])+'.json')) as f:
+      data2= json.load(f)
+      f.close()
 
-  with open('game_data/3749052.json') as f:
-    data = json.load(f)
-
-  with open('game_data/3749079.json') as f:
-    data2 = json.load(f)
-
-  data.extend(data2)
+    data.extend(data2)
 
 
   # find data ranges of possession for each team and create list of players
   poss_list, player_list = tl.get_poss_player_list(data)
 
+  print('Number of games',len(match_data))
+  print('Number of players',len(player_list))
+  print(player_list)
+
   for i in range(len(player_list)):
-    print(player_list[i])
+    print(i,player_list[i])
 
   # create list of each player and event in each possession pathway
   poss_data, poss_name_data = tl.get_poss_data(data,poss_list,player_list)
@@ -60,8 +64,8 @@ def main():
   # determine player score (sum of pathway score) and number of pathways they are in
   indiv_score, player_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
 
-  for i in range(len(player_list)):
-    print(player_list[i][1],player_list[i][0],indiv_score[i][0],indiv_score[i][1]) 
+  #for i in range(len(player_list)):
+    #print(player_list[i][1],player_list[i][0],indiv_score[i][0],indiv_score[i][1]) 
 
   #=============================================================================================================#
 
@@ -81,9 +85,10 @@ def main():
   # score, length of path, number of players, is player present
   total_data_ = [path_length,num_players,*([i for i in player_in_path])]
   total_data = np.transpose(total_data_)
+  print('Shape',np.shape(total_data),np.shape(player_in_path))
   
   nam = [x[1] for x in player_list]
-
+  print(nam)
 
   #====== Machine Learning tutorial ======#
   if 1==0:
@@ -123,7 +128,8 @@ def main():
 
 
 
-  if 1==0:
+  # Examine the data
+  if 1==1:
     if 1==0:
       # individual score vs number of pathways
       fig, ax = plt.subplots()
@@ -133,28 +139,81 @@ def main():
       plt.xlabel('Score') ; plt.ylabel('Num Pathways')
       plt.title('Player Score and Number of Pathways Involved ')
 
-    # score of each pathway vs. length of pathway
-    fig, ax = plt.subplots(2,1)
-    ax[0].plot(path_length,poss_score,'.')
-    ax[1].hist(path_length,bins=20)
-    ax[0].set_title('Effect of Length of Pathway')
-    plt.xlabel('Pathway Length')
-    ax[0].set_ylabel('Score')
-    ax[1].set_ylabel('Num Occurences')
+      # score of each pathway vs. length of pathway
+      fig, ax = plt.subplots(1,3)
+      ax[0].plot(path_length,poss_score,'.')
+      ax[1].hist(path_length,bins=30)
+      ax[2].hist(poss_score,bins=20)
+      ax[2].set_xlabel('Score')
+      ax[0].set_title('Effect of Length of Pathway')
+      ax[1].set_xlabel('Pathway Length')
+      ax[0].set_ylabel('Score')
+      ax[1].set_ylabel('Num Occurences')
 
-    # score of each pathways vs. # of players involved
-    fig, ax = plt.subplots(2,1)
-    ax[0].plot(num_players,poss_score,'.')
-    ax[1].hist(num_players,bins=20)
-    ax[0].set_title('Effect of Number of Players')
-    plt.xlabel('# of Players')
-    ax[0].set_ylabel('Score')
-    ax[1].set_ylabel('Num Occurences')
+      # score of each pathways vs. # of players involved
+      fig, ax = plt.subplots(2,1)
+      ax[0].plot(num_players,poss_score,'.')
+      ax[1].hist(num_players,bins=10)
+      ax[0].set_title('Effect of Number of Players')
+      plt.xlabel('# of Players')
+      ax[0].set_ylabel('Score')
+      ax[1].set_ylabel('Num Occurences')
+
+
+    if 1 ==0:
+      mult_dat = np.zeros((len(poss_score),2))
+      for i in range(len(poss_score)):
+        if total_data[i][9] == 1 and total_data[i][10] == 1:
+          mult_dat[i,0] = 1
+        else:
+          mult_dat[i,0] = 0
+
+        if total_data[i][2] == 1 and total_data[i][3] == 1:
+          mult_dat[i,1] = 1
+        else:
+          mult_dat[i,1] = 0
+
+      title = ['Henry Bergkmap','Kolo Campbell']
+      for i in range(2):
+        fig, ax = plt.subplots(1,3)
+        ax[0].scatter(path_length,poss_score,c=mult_dat[:,i])
+        ax[0].set_xlabel('Path Length') ; ax[0].set_ylabel('Score')
+        ax[1].scatter(num_players,poss_score,c=mult_dat[:,i])
+        ax[1].set_title(title[i])
+        ax[1].set_xlabel('Num Players') ; ax[1].set_ylabel('Score')
+        ax[2].scatter(num_players,path_length,c=mult_dat[:,i])
+        ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
+        plt.legend()
+
+    ### NEED TO MAKE THE SCATTER PLOTS EXTRAPOLATED GRIDS AND : HEAT MAPS OF POINT PERCENTAGES BASED ON POSITION ##
+
+
+    # score of each pathway if certain players are in or not
+    if 1==1:
+      for i in range(len(nam)):
+        fig, ax = plt.subplots(1,3)
+        ax[0].scatter(path_length,poss_score,c=[x[i+2] for x in total_data])
+        ax[0].set_xlabel('Path Length') ; ax[0].set_ylabel('Score')
+        ax[1].scatter(num_players,poss_score,c=[x[i+2] for x in total_data])
+        ax[1].set_xlabel('Num Players') ; ax[1].set_ylabel('Score')
+        ax[1].set_title(nam[i])
+        ax[2].scatter(num_players,path_length,c=[x[i+2] for x in total_data])
+        ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
+        plt.legend()
+      #fig.colorbar(im)
+
+
+
+      fig, ax = plt.subplots()
+      im = plt.scatter(path_length,num_players,c=poss_score)
+      fig.colorbar(im)
+      plt.legend()
+      plt.xlabel('Path length')
+      plt.ylabel('Num of Players')
+      plt.title('')
   
 
-  # score of each pathway if certain players are in or not
 
-  #plt.show()
 
 
   #=============================================================================================================#
@@ -163,7 +222,7 @@ def main():
   sort_poss_list = [x for _,x in sorted(zip(poss_score,poss_list), reverse=True)]
   sort_poss_score = sorted(poss_score, reverse=True)
 
-  for ii in range(7,6):
+  for ii in range(10,1):
     fig, ax=plt.subplots()
     pl.get_pitch()
     plt.ylim(100, -10)
