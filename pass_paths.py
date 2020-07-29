@@ -8,6 +8,7 @@ from sklearn.decomposition import PCA
 from sklearn.decomposition import NMF
 from sklearn.cluster import KMeans
 from itertools import chain
+from scipy.interpolate import griddata
 
 from shutil import copyfile
 
@@ -36,8 +37,8 @@ def main():
         copyfile(src,dst)
 
   data = []
-  #for i in range(len(match_data)):
-  for i in range(5):
+  for i in range(len(match_data)):
+  #for i in range(2):
     with open(str('game_data/'+str(match_data[i]['match_id'])+'.json')) as f:
       data2= json.load(f)
       f.close()
@@ -160,7 +161,7 @@ def main():
       ax[1].set_ylabel('Num Occurences')
 
 
-    if 1 ==0:
+    if 1 == 0:
       mult_dat = np.zeros((len(poss_score),2))
       for i in range(len(poss_score)):
         if total_data[i][9] == 1 and total_data[i][10] == 1:
@@ -187,21 +188,129 @@ def main():
 
     ### NEED TO MAKE THE SCATTER PLOTS EXTRAPOLATED GRIDS AND : HEAT MAPS OF POINT PERCENTAGES BASED ON POSITION ##
 
+    sort_score = sorted(set(poss_score))
+    percent_poss_score = np.zeros(len(poss_score))
 
-    # score of each pathway if certain players are in or not
     if 1==1:
+      #for j in range(len(path_length)):
+
+      #  check_poss = np.zeros(len(sort_score))
+      #  for k in range(len(sort_score)):
+      #    if poss_score[j] == sort_score[k]:
+      #      check_poss[k] += 1
+
+      #  for jj in range(j+1,len(path_length)):
+      #    if path_length[jj] == path_length[j] and num_players[jj] == num_players[j]:
+      #      for k in range(len(sort_score)):
+      #        if poss_score[j] == sort_score[k]:
+      #          check_poss[k] += 1
+
+      #  percent_poss_score[j] = check_poss
+
+      for val in range(len(sort_score)):
+        for j in range(len(path_length)):
+
+          check_poss = 0 ; check_others = 0
+          if poss_score[j] == sort_score[val]:
+            check_poss += 1
+
+            for jj in range(len(path_length)):
+              if jj != j:
+                if path_length[jj] == path_length[j] and num_players[jj] == num_players[j]:
+                  if poss_score[jj] == sort_score[val]:
+                    check_poss += 1
+                  else:
+                    check_others += 1
+
+          if check_poss == 0:
+            percent_poss_score[j] = 0
+          else:
+            percent_poss_score[j] = check_poss / (check_poss+check_others)
+            #print(percent_poss_score[j],check_others)
+            #if check_others != 0:
+            #  print('check others',check_others)
+
+        #print(percent_poss_score)
+        fig, ax = plt.subplots()
+        xi = np.linspace(min(path_length),max(path_length),np.size(path_length))
+        yi = np.linspace(min(num_players),max(num_players),np.size(num_players))
+        zi = griddata((path_length,num_players), percent_poss_score, (xi[None,:], yi[:,None]), method='nearest' )
+
+        im = plt.contour(xi,yi,zi,5,linewidths=0.5,colors='k')
+        im = plt.contourf(xi,yi,zi,5,cmap='RdGy')
+
+        fig.colorbar(im) # draw colorbar
+        #bars.set_label(title[3],fontweight='bold')
+
+
+    if 1==0:
+
+      sort_length = sorted(set(path_length))
+      sort_num_players = sorted(set(num_players))
+      sort_score = sorted(set(poss_score))
+
+      for i in range(len(sort_score)):
+      #for i in range(9,10):
+
+        #====== Surely there has to be a better way to do this ========#
+        # Create a 2d array for percentage of points based on path length and score
+        z = np.zeros((len(sort_length),len(sort_num_players),len(sort_score)))
+
+        # loop through original lists
+        for j in range(len(path_length)):
+
+          # find which axis value belongs to
+          jj_val = 0
+          for jj in sort_length:
+            kk_val = 0
+            for kk in sort_num_players:
+              if path_length[j] == jj and num_players[j] == kk:
+                val = poss_score[j]
+
+                # Determine which indice the score belongs to
+                for ll in range(len(sort_score)):
+                  if val == sort_score[ll]:
+                    z[jj_val,kk_val,ll] += 1
+
+              else:
+                kk_val +=1
+
+            jj_val += 1
+         
+        z_val = np.zeros((len(sort_length),len(sort_num_players)))
+        for j in range(len(sort_length)):
+          for k in range(len(sort_num_players)):
+            if sum(z[j,k,:]) == 0:
+              z_val[j,k] = 0
+            else:
+              z_val[j,k] = z[j,k,i]/sum(z[j,k,:])
+
+
+        fig, ax = plt.subplots()
+        xi = np.linspace(min(sort_length),max(sort_length),np.size(sort_length))
+        yi = np.linspace(min(sort_num_players),max(sort_num_players),np.size(sort_num_players))
+        XI, YI = np.meshgrid(xi,yi)
+
+        plt.contour(xi,yi,np.transpose(z_val),5,linewidths=0.5,colors='k')
+        plt.contourf(xi,yi,np.transpose(z_val),5,cmap=plt.cm.jet)
+        plt.colorbar()
+        plt.title('Score '+str(sort_score[i]))
+
+
+    # score of each pathway if certain players are in or not      
+    if 1==0:
       for i in range(len(nam)):
         fig, ax = plt.subplots(1,3)
         ax[0].scatter(path_length,poss_score,c=[x[i+2] for x in total_data])
         ax[0].set_xlabel('Path Length') ; ax[0].set_ylabel('Score')
         ax[1].scatter(num_players,poss_score,c=[x[i+2] for x in total_data])
+        #ax[1].contour(num_players,poss_score,[x[i+2] for x in total_data])
         ax[1].set_xlabel('Num Players') ; ax[1].set_ylabel('Score')
         ax[1].set_title(nam[i])
         ax[2].scatter(num_players,path_length,c=[x[i+2] for x in total_data])
+        #ax[2].contour(num_player,path_length,[x[i+2] for x in total_data])
         ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
         plt.legend()
-      #fig.colorbar(im)
-
 
 
       fig, ax = plt.subplots()
