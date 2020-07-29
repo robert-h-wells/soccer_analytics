@@ -14,6 +14,11 @@ from shutil import copyfile
 
 import tools as tl
 import plots as pl
+
+# TO-DO LIST ::
+  # 2 messy parts to clean up and 1 part that can possibly be made more efficiently (7/29)
+  # Put the graphs into functions in plots.py and clean up this file (7/29)
+
 #=========================================================================================================================#
 
 def main():
@@ -51,10 +56,9 @@ def main():
 
   print('Number of games',len(match_data))
   print('Number of players',len(player_list))
-  print(player_list)
 
   for i in range(len(player_list)):
-    print(i,player_list[i])
+    print(i,player_list[i][1])
 
   # create list of each player and event in each possession pathway
   poss_data, poss_name_data = tl.get_poss_data(data,poss_list,player_list)
@@ -64,10 +68,6 @@ def main():
 
   # determine player score (sum of pathway score) and number of pathways they are in
   indiv_score, player_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
-
-  #for i in range(len(player_list)):
-    #print(player_list[i][1],player_list[i][0],indiv_score[i][0],indiv_score[i][1]) 
-
   #=============================================================================================================#
 
   ## use techniques of machine learning to find the features that make the highest scoring possession pathways ##
@@ -86,10 +86,9 @@ def main():
   # score, length of path, number of players, is player present
   total_data_ = [path_length,num_players,*([i for i in player_in_path])]
   total_data = np.transpose(total_data_)
-  print('Shape',np.shape(total_data),np.shape(player_in_path))
   
+  # list of player names
   nam = [x[1] for x in player_list]
-  print(nam)
 
   #====== Machine Learning tutorial ======#
   if 1==0:
@@ -129,38 +128,81 @@ def main():
 
 
 
-  # Examine the data
-  if 1==1:
-    if 1==0:
-      # individual score vs number of pathways
-      fig, ax = plt.subplots()
-      sort_player = [x for x in sorted(zip(indiv_score,nam), reverse=True)]
-      plt.plot([x[0] for x,y in sort_player],[x[1] for x,y in sort_player],'.')
-      #plt.xticks([x[0] for x,y in sort_player],labels=[y for x,y in sort_player],rotation=70)
-      plt.xlabel('Score') ; plt.ylabel('Num Pathways')
-      plt.title('Player Score and Number of Pathways Involved ')
+  #===== Examine the data to find important attributes =====#
+  sort_length = sorted(set(path_length))
+  sort_num_players = sorted(set(num_players))
+  sort_score = sorted(set(poss_score))
 
-      # score of each pathway vs. length of pathway
+  # determine the degeneracy of combinations of the 3 important attributes
+  # length vs score, num players vs score, length and num players vs score
+  values_length = []
+  values_num_players = []
+  values_all = []
+
+  # probably a better way to determine this !!!! TO DO LIST
+  for i in sort_length:
+    for j in sort_num_players:
+      for k in sort_score:
+        
+        counts_length = 0 
+        counts_players = 0
+        counts_all = 0
+
+        for ii in range(len(poss_score)):
+
+          # same length gives same score
+          if path_length[ii] == i and poss_score[ii] == k:
+            counts_length += 1
+
+          # same num players give same score
+          if num_players[ii] == j and poss_score[ii] == k:
+            counts_players += 1
+
+          # same length and num players give same score
+          if path_length[ii] == i and num_players[ii] == j and poss_score[ii] == k:
+            counts_all += 1
+
+        if counts_length > 0:  values_length.append([i,k,counts_length])
+        if counts_players > 0: values_num_players.append([j,k,counts_players])
+        if counts_all > 0: values_all.append([i,j,k,counts_all])  
+ 
+
+  if 1==1:
+
+    if 1==0:
+
+      # TO-DO: MAKE THESES FUNCTIONS IN plots.py
+
+      # score of each pathway vs. length of pathway 
       fig, ax = plt.subplots(1,3)
-      ax[0].plot(path_length,poss_score,'.')
-      ax[1].hist(path_length,bins=30)
+      color = [x[2] for x in values_length]
+      ax[0].scatter([x[0] for x in values_length],[x[1] for x in values_length],c=color,s=color)
+      ax[0].set_title('Effect of Length of Pathway')
+      ax[0].set_ylabel('Score')
+      ax[0].set_xlabel('Path Length')
+
+      ax[1].hist(path_length,bins=20)
+      ax[1].set_xlabel('Pathway Length')
+      ax[1].set_ylabel('Num Occurences')
+
       ax[2].hist(poss_score,bins=20)
       ax[2].set_xlabel('Score')
-      ax[0].set_title('Effect of Length of Pathway')
-      ax[1].set_xlabel('Pathway Length')
-      ax[0].set_ylabel('Score')
-      ax[1].set_ylabel('Num Occurences')
-
+      ax[2].set_ylabel('Num Occurences')
+        
       # score of each pathways vs. # of players involved
       fig, ax = plt.subplots(2,1)
-      ax[0].plot(num_players,poss_score,'.')
-      ax[1].hist(num_players,bins=10)
+      color = [x[2] for x in values_num_players]
+      ax[0].scatter([x[0] for x in values_num_players],[x[1] for x in values_num_players],c=color,s=color)
       ax[0].set_title('Effect of Number of Players')
-      plt.xlabel('# of Players')
       ax[0].set_ylabel('Score')
+      
+      ax[1].hist(num_players,bins=10)
       ax[1].set_ylabel('Num Occurences')
+      
+      plt.xlabel('# of Players')
+  
 
-
+    # want to see how groups of players affect important attributes :: TO-DO CLEAN UP
     if 1 == 0:
       mult_dat = np.zeros((len(poss_score),2))
       for i in range(len(poss_score)):
@@ -186,26 +228,10 @@ def main():
         ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
         plt.legend()
 
-    ### NEED TO MAKE THE SCATTER PLOTS EXTRAPOLATED GRIDS AND : HEAT MAPS OF POINT PERCENTAGES BASED ON POSITION ##
 
-    sort_score = sorted(set(poss_score))
     percent_poss_score = np.zeros(len(poss_score))
 
-    if 1==1:
-      #for j in range(len(path_length)):
-
-      #  check_poss = np.zeros(len(sort_score))
-      #  for k in range(len(sort_score)):
-      #    if poss_score[j] == sort_score[k]:
-      #      check_poss[k] += 1
-
-      #  for jj in range(j+1,len(path_length)):
-      #    if path_length[jj] == path_length[j] and num_players[jj] == num_players[j]:
-      #      for k in range(len(sort_score)):
-      #        if poss_score[j] == sort_score[k]:
-      #          check_poss[k] += 1
-
-      #  percent_poss_score[j] = check_poss
+    if 1==0:   # TO-DO : THIS LOOKS TERRIBLE RIGHT NOW
 
       for val in range(len(sort_score)):
         for j in range(len(path_length)):
@@ -226,11 +252,7 @@ def main():
             percent_poss_score[j] = 0
           else:
             percent_poss_score[j] = check_poss / (check_poss+check_others)
-            #print(percent_poss_score[j],check_others)
-            #if check_others != 0:
-            #  print('check others',check_others)
 
-        #print(percent_poss_score)
         fig, ax = plt.subplots()
         xi = np.linspace(min(path_length),max(path_length),np.size(path_length))
         yi = np.linspace(min(num_players),max(num_players),np.size(num_players))
@@ -243,14 +265,9 @@ def main():
         #bars.set_label(title[3],fontweight='bold')
 
 
-    if 1==0:
-
-      sort_length = sorted(set(path_length))
-      sort_num_players = sorted(set(num_players))
-      sort_score = sorted(set(poss_score))
+    if 1==0:  # TO-DO: DATA DOES COME OUT NICELY
 
       for i in range(len(sort_score)):
-      #for i in range(9,10):
 
         #====== Surely there has to be a better way to do this ========#
         # Create a 2d array for percentage of points based on path length and score
@@ -320,9 +337,6 @@ def main():
       plt.xlabel('Path length')
       plt.ylabel('Num of Players')
       plt.title('')
-  
-
-
 
 
   #=============================================================================================================#
