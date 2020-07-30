@@ -84,3 +84,43 @@ def plot_pass_path(data,start_val,end_val):
 
     #plt.gca().invert_yaxis()
 #===============================================================================================#
+def get_ndim_plots(dim,plot_type,data,title,xlabel,ylabel):  # ,labels
+    """
+    Make dim[0] x dim[1] plot where plot_type determines the tye of subplot.
+    0 - plot, 1 - hist, 2 - scatter, 3 - scatter with color labels, 4 - scatter with color and size
+    
+    Data is n-dim list which corresponds to number of subplots.
+    """
+    fig, ax = plt.subplots(dim[0],dim[1])
+    
+    val = 0
+    for x in range(dim[0]):
+        for y in range(dim[1]):
+            
+            if plot_type[val] == 0:  # plot
+                print('nope')
+
+            elif plot_type[val] == 1:  # hist
+                ax[val].hist(data[val])
+                ax[val].set_xlabel(xlabel[val])
+                ax[val].set_ylabel(ylabel[val])
+
+            elif plot_type[val] == 2:  # scatter
+                ax[val].scatter(data[val][0],data[val][1])
+                ax[val].set_xlabel(xlabel[val])
+                ax[val].set_ylabel(ylabel[val])
+
+            elif plot_type[val] == 3:  # scatter with color labels
+                ax[val].scatter(data[val][0],data[val][1],c=data[val][2])
+                ax[val].set_xlabel(xlabel[val])
+                ax[val].set_ylabel(ylabel[val])
+
+            elif plot_type[val] == 4:  # scatter with color and size labels
+                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],s=data[val][2])
+                ax[val].set_xlabel(xlabel[val])
+                ax[val].set_ylabel(ylabel[val])
+
+            val += 1
+
+    plt.suptitle(title[-1])
+#===============================================================================================#

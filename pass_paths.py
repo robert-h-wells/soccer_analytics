@@ -9,6 +9,7 @@ from sklearn.decomposition import NMF
 from sklearn.cluster import KMeans
 from itertools import chain
 from scipy.interpolate import griddata
+from collections import Counter
 
 from shutil import copyfile
 
@@ -22,9 +23,11 @@ import plots as pl
 #=========================================================================================================================#
 
 def main():
-  # data contains json information 
-  # poss_list contains start and end data endices for each possesion  (focusing on Arsenal) 7/16
-  # poss_data/poss_name_data gives the id/name of each player and event type for paths 
+  """
+  data contains json information 
+  poss_list contains start and end data endices for each possesion  (focusing on Arsenal) 7/16
+  poss_data/poss_name_data gives the id/name of each player and event type for paths
+  """
 
   with open('game_data/44.json') as f:
     match_data = json.load(f)
@@ -69,6 +72,7 @@ def main():
   # determine player score (sum of pathway score) and number of pathways they are in
   indiv_score, player_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
   #=============================================================================================================#
+
 
   ## use techniques of machine learning to find the features that make the highest scoring possession pathways ##
   # sort by length, number of players, etc.
@@ -167,39 +171,35 @@ def main():
         if counts_all > 0: values_all.append([i,j,k,counts_all])  
  
 
+  # Make plots of the important attributes
   if 1==1:
 
-    if 1==0:
-
-      # TO-DO: MAKE THESES FUNCTIONS IN plots.py
+    if 1==0:  # Could possibly clean this up a litte more, but added a function to make the plots which has helped
 
       # score of each pathway vs. length of pathway 
-      fig, ax = plt.subplots(1,3)
-      color = [x[2] for x in values_length]
-      ax[0].scatter([x[0] for x in values_length],[x[1] for x in values_length],c=color,s=color)
-      ax[0].set_title('Effect of Length of Pathway')
-      ax[0].set_ylabel('Score')
-      ax[0].set_xlabel('Path Length')
+      plot_data = [[],[],[]]
+      plot_data[0] = ([[x[0] for x in values_length],[x[1] for x in values_length],
+                      [x[2] for x in values_length]])
+      plot_data[1] = path_length
+      plot_data[2] = poss_score
+      title = ['Effect of Pathway Length']
+      xlabel = ['Path Length','Path Length','Score']
+      ylabel = ['Score','Num Occurences','Num Occurences']
 
-      ax[1].hist(path_length,bins=20)
-      ax[1].set_xlabel('Pathway Length')
-      ax[1].set_ylabel('Num Occurences')
+      pl.get_ndim_plots([1,3],[4,1,1],plot_data,title,xlabel,ylabel)
 
-      ax[2].hist(poss_score,bins=20)
-      ax[2].set_xlabel('Score')
-      ax[2].set_ylabel('Num Occurences')
-        
+          
       # score of each pathways vs. # of players involved
-      fig, ax = plt.subplots(2,1)
-      color = [x[2] for x in values_num_players]
-      ax[0].scatter([x[0] for x in values_num_players],[x[1] for x in values_num_players],c=color,s=color)
-      ax[0].set_title('Effect of Number of Players')
-      ax[0].set_ylabel('Score')
-      
-      ax[1].hist(num_players,bins=10)
-      ax[1].set_ylabel('Num Occurences')
-      
-      plt.xlabel('# of Players')
+      plot_data = [[],[]]
+
+      plot_data[0] = ([[x[0] for x in values_num_players],[x[1] for x in values_num_players],
+                      [x[2] for x in values_num_players]])
+      plot_data[1] = num_players
+      title = ['Effect of Number of Players']
+      xlabel = ['Num Players','Num Players']
+      ylabel = ['Score','Num Occurences']
+
+      pl.get_ndim_plots([2,1],[4,1],plot_data,title,xlabel,ylabel)
   
 
     # want to see how groups of players affect important attributes :: TO-DO CLEAN UP
@@ -231,38 +231,60 @@ def main():
 
     percent_poss_score = np.zeros(len(poss_score))
 
-    if 1==0:   # TO-DO : THIS LOOKS TERRIBLE RIGHT NOW
+    if 1==1:   # TO-DO : THIS LOOKS TERRIBLE RIGHT NOW
 
-      for val in range(len(sort_score)):
-        for j in range(len(path_length)):
+      # Goal : Make 3d plot with x - path length, y - num palyers, and 
+      # z - percent values of pathway score
 
-          check_poss = 0 ; check_others = 0
-          if poss_score[j] == sort_score[val]:
-            check_poss += 1
+      # Will produce a 3d plot for each score value and get a heatmap of the goal
 
-            for jj in range(len(path_length)):
-              if jj != j:
-                if path_length[jj] == path_length[j] and num_players[jj] == num_players[j]:
-                  if poss_score[jj] == sort_score[val]:
-                    check_poss += 1
-                  else:
-                    check_others += 1
+      # Determine the number of times each x,y value occurs with some score and 
+      # find percentages of certain score for each of those values 
 
-          if check_poss == 0:
-            percent_poss_score[j] = 0
-          else:
-            percent_poss_score[j] = check_poss / (check_poss+check_others)
+      lister = sorted(list(Counter(num_players).items()), key=lambda x:x[0])
+      print(lister)
+      print('')
+      print(np.shape(values_all))
+       
+      # ARGGHHH
+      
+      for i in sort_length:
+        for j in sort_num_players:
+          x = [y[0],y[1] for y in values_all ]
+          print(x)
 
-        fig, ax = plt.subplots()
-        xi = np.linspace(min(path_length),max(path_length),np.size(path_length))
-        yi = np.linspace(min(num_players),max(num_players),np.size(num_players))
-        zi = griddata((path_length,num_players), percent_poss_score, (xi[None,:], yi[:,None]), method='nearest' )
 
-        im = plt.contour(xi,yi,zi,5,linewidths=0.5,colors='k')
-        im = plt.contourf(xi,yi,zi,5,cmap='RdGy')
+      if 1==0:
+        for val in range(len(sort_score)):
+          for j in range(len(path_length)):
 
-        fig.colorbar(im) # draw colorbar
-        #bars.set_label(title[3],fontweight='bold')
+            check_poss = 0 ; check_others = 0
+            if poss_score[j] == sort_score[val]:
+              check_poss += 1
+
+              for jj in range(len(path_length)):
+                if jj != j:
+                  if path_length[jj] == path_length[j] and num_players[jj] == num_players[j]:
+                    if poss_score[jj] == sort_score[val]:
+                      check_poss += 1
+                    else:
+                      check_others += 1
+
+            if check_poss == 0:
+              percent_poss_score[j] = 0
+            else:
+              percent_poss_score[j] = check_poss / (check_poss+check_others)
+
+          fig, ax = plt.subplots()
+          xi = np.linspace(min(path_length),max(path_length),np.size(path_length))
+          yi = np.linspace(min(num_players),max(num_players),np.size(num_players))
+          zi = griddata((path_length,num_players), percent_poss_score, (xi[None,:], yi[:,None]), method='nearest' )
+
+          im = plt.contour(xi,yi,zi,5,linewidths=0.5,colors='k')
+          im = plt.contourf(xi,yi,zi,5,cmap='RdGy')
+
+          fig.colorbar(im) # draw colorbar
+          #bars.set_label(title[3],fontweight='bold')
 
 
     if 1==0:  # TO-DO: DATA DOES COME OUT NICELY

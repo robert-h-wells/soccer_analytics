@@ -211,8 +211,8 @@ def get_indiv_score(player_list,poss_data,poss_score):
 
     indiv_score = []
     player_in_path = [[0 for i in range(len(poss_data))] for j in range(len(player_list))]
-    val = 0
-    for id_val, type_val in player_list:
+
+    for val, (id_val, type_val) in enumerate(player_list):
         score = 0
         num_events = 0
         
@@ -231,7 +231,6 @@ def get_indiv_score(player_list,poss_data,poss_score):
                 player_in_path[val][i] = 0
 
         indiv_score.append([score,num_events])
-        val += 1
 
     return(indiv_score,player_in_path)
 #===============================================================================================#
