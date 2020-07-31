@@ -142,10 +142,14 @@ def main():
   values_length = []
   values_num_players = []
   values_all = []
+  values_total = []
 
   # probably a better way to determine this !!!! TO DO LIST
   for i in sort_length:
     for j in sort_num_players:
+
+      counts_total = 0
+
       for k in sort_score:
         
         counts_length = 0 
@@ -166,9 +170,15 @@ def main():
           if path_length[ii] == i and num_players[ii] == j and poss_score[ii] == k:
             counts_all += 1
 
+          # find number of pathways at length and num players
+          if path_length[ii] == i and num_players[ii] == j:
+            counts_total += 1
+
         if counts_length > 0:  values_length.append([i,k,counts_length])
         if counts_players > 0: values_num_players.append([j,k,counts_players])
         if counts_all > 0: values_all.append([i,j,k,counts_all])  
+
+      if counts_total > 0: values_total.append([i,j,counts_total])
  
 
   # Make plots of the important attributes
@@ -244,14 +254,29 @@ def main():
       lister = sorted(list(Counter(num_players).items()), key=lambda x:x[0])
       print(lister)
       print('')
-      print(np.shape(values_all))
+      print(np.shape(values_all),len(values_all))
+      print(np.shape(values_total),len(values_total))
+
+      #for i in range(len(values_total)):
+      #  print(values_total[i])
        
-      # ARGGHHH
       
-      for i in sort_length:
-        for j in sort_num_players:
-          x = [y[0],y[1] for y in values_all ]
-          print(x)
+      percent_poss_score = []
+      percent = 0.
+      val = 0
+      for i in range(len(values_all)):
+        if (values_all[i][0] != values_total[val][0] or values_all[i][1] 
+          != values_total[val][1]):
+          val += 1
+
+        #print(i,val)
+
+
+        if (values_all[i][0] == values_total[val][0] and values_all[i][1] 
+          == values_total[val][1]):
+          percent = values_all[i][-1] / values_total[val][-1]
+          percent_poss_score.append(percent)
+      
 
 
       if 1==0:
