@@ -280,6 +280,10 @@ def main():
     # score of each pathway if certain players are in or not      
     if 1==0:
       for i in range(len(nam)):
+
+        # need to finish this 
+        #pl.get_ndim_plots([1,3],[],plot_data,title,xlabel,ylabel)
+
         fig, ax = plt.subplots(1,3)
         ax[0].scatter(path_length,poss_score,c=[x[i+2] for x in total_data])
         ax[0].set_xlabel('Path Length') ; ax[0].set_ylabel('Score')
