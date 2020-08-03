@@ -17,7 +17,7 @@ import tools as tl
 import plots as pl
 
 # TO-DO LIST ::
-  # 2 messy parts to clean up and 1 part that can possibly be made more efficiently (7/29)
+  # 1 messy part to clean up and 1 part that can possibly be made more efficiently (8/3)
 
 #=========================================================================================================================#
 
@@ -43,7 +43,6 @@ def main():
       f.close()
 
     data.extend(data2)
-
 
   # find data ranges of possession for each team and create list of players
   poss_list, player_list = tl.get_poss_player_list(data)
@@ -176,7 +175,7 @@ def main():
       pl.get_ndim_plots([2,1],[4,1],plot_data,title,xlabel,ylabel)
   
 
-    # want to see how groups of players affect important attributes :: TO-DO CLEAN UP
+    # want to see how groups of players affect important attributes :: TO-DO IMPROVE
     if 1 == 0:
       mult_dat = np.zeros((len(poss_score),2))
       for i in range(len(poss_score)):
@@ -201,6 +200,7 @@ def main():
         ax[2].scatter(num_players,path_length,c=mult_dat[:,i])
         ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
         plt.legend()
+
 
     if 1==1: 
       # Contour plot of possesion points based on pathway length and num players
@@ -228,75 +228,23 @@ def main():
           fig.colorbar(im)     
 
 
-    if 1==0:  # TO-DO: DATA DOES COME OUT NICELY
-
-      for i in range(len(sort_score)):
-
-        #====== Surely there has to be a better way to do this ========#
-        # Create a 2d array for percentage of points based on path length and score
-        z = np.zeros((len(sort_length),len(sort_num_players),len(sort_score)))
-
-        # loop through original lists
-        for j in range(len(path_length)):
-
-          # find which axis value belongs to
-          jj_val = 0
-          for jj in sort_length:
-            kk_val = 0
-            for kk in sort_num_players:
-              if path_length[j] == jj and num_players[j] == kk:
-                val = poss_score[j]
-
-                # Determine which indice the score belongs to
-                for ll in range(len(sort_score)):
-                  if val == sort_score[ll]:
-                    z[jj_val,kk_val,ll] += 1
-
-              else:
-                kk_val +=1
-
-            jj_val += 1
-         
-        z_val = np.zeros((len(sort_length),len(sort_num_players)))
-        for j in range(len(sort_length)):
-          for k in range(len(sort_num_players)):
-            if sum(z[j,k,:]) == 0:
-              z_val[j,k] = 0
-            else:
-              z_val[j,k] = z[j,k,i]/sum(z[j,k,:])
-
-
-        fig, ax = plt.subplots()
-        xi = np.linspace(min(sort_length),max(sort_length),np.size(sort_length))
-        yi = np.linspace(min(sort_num_players),max(sort_num_players),np.size(sort_num_players))
-        XI, YI = np.meshgrid(xi,yi)
-
-        plt.contour(xi,yi,np.transpose(z_val),5,linewidths=0.5,colors='k')
-        plt.contourf(xi,yi,np.transpose(z_val),5,cmap=plt.cm.jet)
-        plt.colorbar()
-        plt.title('Score '+str(sort_score[i]))
-
-
     # score of each pathway if certain players are in or not      
     if 1==0:
-      for i in range(len(nam)):
+      #for i in range(len(nam)):
+      for i in range(3):
 
-        # need to finish this 
-        #pl.get_ndim_plots([1,3],[],plot_data,title,xlabel,ylabel)
-
-        fig, ax = plt.subplots(1,3)
-        ax[0].scatter(path_length,poss_score,c=[x[i+2] for x in total_data])
-        ax[0].set_xlabel('Path Length') ; ax[0].set_ylabel('Score')
-        ax[1].scatter(num_players,poss_score,c=[x[i+2] for x in total_data])
-        #ax[1].contour(num_players,poss_score,[x[i+2] for x in total_data])
-        ax[1].set_xlabel('Num Players') ; ax[1].set_ylabel('Score')
-        ax[1].set_title(nam[i])
-        ax[2].scatter(num_players,path_length,c=[x[i+2] for x in total_data])
-        #ax[2].contour(num_player,path_length,[x[i+2] for x in total_data])
-        ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
-        plt.legend()
+        plot_data = [[],[],[]]
+        plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
+        plot_data[1] = [num_players,poss_score,[x[i+2] for x in total_data]]
+        plot_data[2] = [num_players,path_length,[x[i+2] for x in total_data]]
+        title = [nam[i]]
+        xlabel = ['Path Length','Num Players','Num Players']
+        ylabel = ['Score','Score','Path Length']
+        pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
 
+
+    if 1==0:  # this is pretty boring atm
       fig, ax = plt.subplots()
       im = plt.scatter(path_length,num_players,c=poss_score)
       fig.colorbar(im)
