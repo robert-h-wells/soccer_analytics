@@ -1,9 +1,12 @@
 #=========================================================================================================================#
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation
 import json
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
 from sklearn.decomposition import PCA
 from sklearn.decomposition import NMF
 from sklearn.cluster import KMeans
@@ -18,6 +21,9 @@ import plots as pl
 
 # TO-DO LIST ::
   # 1 messy part to clean up and 1 part that can possibly be made more efficiently (8/3)
+
+  # Would like to see if i can make a new file where I look at everything through a Pandas framework
+  # then I could use more of the sklearn modules
 
 #=========================================================================================================================#
 
@@ -74,8 +80,8 @@ def main():
   for i in range(len(poss_score)):
     num_players[i] = len(set([x[0] for x in poss_data[i]]))
 
-  # score, length of path, number of players, is player present
-  total_data_ = [path_length,num_players,*([i for i in player_in_path])]
+  ## score, length of path, number of players, is player present
+  total_data_ = [path_length,num_players,*([i for i in player_in_path]),poss_score]
   total_data = np.transpose(total_data_)
   
   # list of player names
@@ -141,13 +147,14 @@ def main():
       == values_total[val][1]):
       percent = values_all[i][-1] / values_total[val][-1]
       percent_poss_score.append([values_all[i][0],values_all[i][1],values_all[i][2],percent])
+  
   #==================================================================================#
  
 
   # Make plots of the important attributes
-  if 1==1:
+  if 1==0:
 
-    if 1==0:  # Make 2 plots
+    if 1==1:  # Make 2 plots
 
       # score of each pathway vs. length of pathway 
       plot_data = [[],[],[]]
@@ -202,7 +209,7 @@ def main():
         plt.legend()
 
 
-    if 1==1: 
+    if 1==0: 
       # Contour plot of possesion points based on pathway length and num players
       # For each pathway length and num players a percentage of the specific pathway
       # points are determined.
@@ -232,6 +239,8 @@ def main():
     if 1==0:
       #for i in range(len(nam)):
       for i in range(3):
+
+        # FOR SCATTER, alpha = 0.1 for easier visualization 
 
         plot_data = [[],[],[]]
         plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
@@ -268,9 +277,10 @@ def main():
 
   #plt.gca().invert_yaxis()
   plt.show()
+  #=============================================================================================================#
 
+  #====== Machine Learning tutorial ======# 
 
-  #====== Machine Learning tutorial ======#  Will come back to this in the future
   if 1==0:  
     ## use techniques of machine learning to find the features that make 
     ## the highest scoring possession pathways
@@ -306,6 +316,8 @@ def main():
     plt.legend()
     plt.gca().set_aspect("equal")
     plt.title('PCA')
+
+  return(total_data,nam)
 #=========================================================================================================================#
 
 

@@ -106,17 +106,19 @@ def get_ndim_plots(dim,plot_type,data,title,xlabel,ylabel):  # ,labels
                 ax[val].set_ylabel(ylabel[val])
 
             elif plot_type[val] == 2:  # scatter
-                ax[val].scatter(data[val][0],data[val][1])
+                ax[val].scatter(data[val][0],data[val][1],alpha=0.5)
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
 
             elif plot_type[val] == 3:  # scatter with color labels
-                ax[val].scatter(data[val][0],data[val][1],c=data[val][2])
+                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],alpha=0.5,
+                    cmap=plt.get_cmap("jet"))
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
 
             elif plot_type[val] == 4:  # scatter with color and size labels
-                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],s=data[val][2])
+                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],s=data[val][2],
+                    alpha=0.5,cmap=plt.get_cmap("jet"))
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
 
