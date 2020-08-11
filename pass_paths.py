@@ -209,7 +209,7 @@ def main():
         plt.legend()
 
 
-    if 1==0: 
+    if 1==1: 
       # Contour plot of possesion points based on pathway length and num players
       # For each pathway length and num players a percentage of the specific pathway
       # points are determined.

@@ -48,3 +48,9 @@ print(some_digit_scores)
 #y_train_pred = cross_val_predict(svm_clf,data, data_labels, cv=3)
 #conf_mx = confusion_matrix(data_labels, y_train_pred)
 #print(conf_mx)
+
+
+from sklearn.linear_model import LogisticRegression
+softmax_reg = LogisticRegression(multi_class="multinomial",solver="lbfgs", C=10)
+softmax_reg.fit(data, data_labels)
+print(softmax_reg.predict(some_digit))
