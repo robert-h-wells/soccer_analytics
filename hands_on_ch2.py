@@ -53,6 +53,8 @@ if 1==1:
 
     lin_reg = LinearRegression()
     lin_reg.fit(data, data_labels)
+    print('Intercept and Coef')
+    print(lin_reg.intercept_, lin_reg.coef_)
 
     some_data = data.iloc[:5]
     some_labels = data_labels.iloc[:5]
@@ -118,5 +120,5 @@ if 1==1:
         from sklearn.model_selection import StratifiedShuffleSplit
         split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
         for train_index, test_index in split.split(data_json, data_json["Num"]):
-        strat_train_set = data_json.loc[train_index]
-        strat_test_set = data_json.loc[test_index]
+            strat_train_set = data_json.loc[train_index]
+            strat_test_set = data_json.loc[test_index]
