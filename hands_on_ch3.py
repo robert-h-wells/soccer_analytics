@@ -21,6 +21,9 @@ import pass_paths as mn
 
 import classification as clas
 
+# Have finished putting this data into classification.py
+# Will keep as a reference but can discard whenever.
+
 vals = mn.main()
 total_data = vals[0]
 nam = vals[1]
@@ -49,7 +52,7 @@ print(some_digit_scores)
 
 
 print('3rd')
-model3_type = clas.classification(data, data_labels, 'svc')
+model3_type = clas.classification(data, data_labels, 'sgd')
 model3_type.init_fit()
 check = model3_type.predictor([some_digit])
 check2 = model3_type.predict_scores([some_digit])
