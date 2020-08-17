@@ -15,28 +15,40 @@ class classification:
         self.labels = labels
         self.name = name
         self.model = []
-        self.values = 0
         self.rand = rand
+
+    def init(self,val=0,degree=2):  # Pre-processing data
+        if val == 1:
+            from sklearn.preprocessing import StandardScaler
+            return(StandardScaler())
+        elif val == 2:
+            from sklearn.preprocessing import PolynomialFeatures
+            return(PolynomialFeatures(degree=degree_val, include_bias=False))
 
     def init_fit(self):
         if self.name == 'sgd':
             from sklearn.linear_model import SGDClassifier
             self.model = SGDClassifier(random_state=self.rand)
+
         elif self.name =='rand_forest':
+            from sklearn.ensemble import RandomForestClassifier
             self.model = RandomForestClassifier(random_state=self.rand)
+
         elif self.name == 'svc':
             from sklearn.svm import SVC
             self.model = SVC()
+
         elif self.name == 'kneighbors':
             from sklearn.neighbors import KNeighborsClassifier
             self.model = KNeighborsClassifier()
+
         else:
             print('No correct model given.')
-            print('Try again witgh sgd, rand_forest, svc, kneighbors')
+            print('Try again with sgd, rand_forest, svc, kneighbors')
             return()
 
-        self.model.fit(self.X, self.labels)
         return(self.model)
+
 
     def predictor(self,predict_val):
         return_val = self.model.predict(predict_val)

@@ -15,6 +15,11 @@ from sklearn.preprocessing import PolynomialFeatures
 import tools as tl
 import plots as pl
 import pass_paths as mn 
+import regression as regres
+
+# Have finished this code with repression.py
+
+# The functions defined here are still very useful
 
 def plot_svc_decision_boundary(svm_clf, xmin, xmax):
     w = svm_clf['linear_svc'].coef_[0]
@@ -76,45 +81,61 @@ if 1==1:
 
 # linear SVM
 if 1==0:
+
+    model_type = regres.regression(X, data_labels_new, name='svm')
+
     svm_clf = Pipeline([
-            ("scaler", StandardScaler()),
-            ("linear_svc", LinearSVC(C=1, loss="hinge")),
+            ("scaler", model_type.init(1)),
+            ("linear_svc", model_type.init_fit()),
         ])
 
     svm_clf.fit(X, data_labels_new)
-
     X_scaled = svm_clf["scaler"].fit_transform(X)
-
     fig, ax = plt.subplots()
     plot_svc_decision_boundary(svm_clf, min(X_scaled[:,0]), max(X_scaled[:,0]))
     plt.scatter(X_scaled[:,0],X_scaled[:,1],c=data_labels_new)
     plt.show()
 
 # polynomial SVM
-polynomial_svm_clf = Pipeline([
-        ("poly_features", PolynomialFeatures(degree=3)),
-        ("scaler", StandardScaler()),
-        ("svm_clf", LinearSVC(C=10, loss="hinge"))
-    ])
+if 1==0:
 
-X_scaled = polynomial_svm_clf["scaler"].fit_transform(X)
+    model_type = regres.regression(X, data_labels_new,name='svm')
 
-polynomial_svm_clf.fit(X, data_labels_new)
+    polynomial_svm_clf = Pipeline([
+            ("poly_features", model_type.init(2,degree_val=3)),
+            ("scaler", model_type.init(1)),
+            ("svm_clf", model_type.init_fit(c_val=10))
+        ])
+
+    X_scaled = polynomial_svm_clf["scaler"].fit_transform(X)
+
+    polynomial_svm_clf.fit(X, data_labels_new)
 
 
 # Polynomial Kernel
-poly_kernel_svm_clf = Pipeline([
-        ("scaler", StandardScaler()),
-        ("svm_clf", SVC(kernel="poly", degree=5, coef0=1, C=5))
-    ])
-poly_kernel_svm_clf.fit(X, data_labels_new)
+if 1==1:
+
+    model_type = regres.regression(X, data_labels_new,name='poly_kernel')
+
+    poly_kernel_svm_clf = Pipeline([
+            ("scaler", model_type.init(1)),
+            ("svm_clf", model_type.init_fit(c_val=5))
+        ])
+    
+    poly_kernel_svm_clf.fit(X, data_labels_new)
 
 # Gaussian RBF Kernel
-rbf_kernel_svm_clf = Pipeline([
-        ("scaler", StandardScaler()),
-        ("svm_clf", SVC(kernel="rbf", gamma=5, C=10))
-    ])
-rbf_kernel_svm_clf.fit(X, data_labels_new)
+if 1==1:
+
+    model_type = regres.regression(X, data_labels_new,name='gauss_rbf_kernel')
+
+    rbf_kernel_svm_clf = Pipeline([
+            ("scaler", model_type.init(1)),
+            ("svm_clf", model_type.init_fit())
+        ])
+
+
+    rbf_kernel_svm_clf.fit(X, data_labels_new)
 
 
 def plot_predictions(clf, axes):
@@ -127,14 +148,15 @@ def plot_predictions(clf, axes):
     plt.contourf(x0, x1, y_pred, cmap=plt.cm.brg, alpha=0.2)
     plt.contourf(x0, x1, y_decision, cmap=plt.cm.brg, alpha=0.1)
 
-fig, ax = plt.subplots()
-plot_predictions(poly_kernel_svm_clf,[min(X[:,0])-1,max(X[:,0])+1,min(X[:,1])-1,max(X[:,1])+1])
-plt.scatter(X[:,0],X[:,1],c=data_labels_new)
-plt.title('Poly Kernel')
+if 1==1:
+    fig, ax = plt.subplots()
+    plot_predictions(poly_kernel_svm_clf,[min(X[:,0])-1,max(X[:,0])+1,min(X[:,1])-1,max(X[:,1])+1])
+    plt.scatter(X[:,0],X[:,1],c=data_labels_new)
+    plt.title('Poly Kernel')
 
-fig, ax = plt.subplots()
-plot_predictions(rbf_kernel_svm_clf,[min(X[:,0])-1,max(X[:,0])+1,min(X[:,1])-1,max(X[:,1])+1])
-plt.scatter(X[:,0],X[:,1],c=data_labels_new)
-plt.title('Gaussian RBF')
+    fig, ax = plt.subplots()
+    plot_predictions(rbf_kernel_svm_clf,[min(X[:,0])-1,max(X[:,0])+1,min(X[:,1])-1,max(X[:,1])+1])
+    plt.scatter(X[:,0],X[:,1],c=data_labels_new)
+    plt.title('Gaussian RBF')
 
-plt.show()
+    plt.show()
