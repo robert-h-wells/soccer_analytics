@@ -53,8 +53,12 @@ model3_type = clas.classification(data, data_labels, 'svc')
 model3_type.init_fit()
 check = model3_type.predictor([some_digit])
 check2 = model3_type.predict_scores([some_digit])
+check3 = model3_type.cross_valid()
+check4 = model3_type.confus_mat()
 print(check) 
 print(check2) ; print()
+print(check3) ; print()
+print(check4)
 
 
 

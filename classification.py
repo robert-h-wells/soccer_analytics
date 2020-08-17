@@ -17,13 +17,15 @@ class classification:
         self.model = []
         self.values = 0
         self.return_val = 0
-        self.scores = 0
+        #self.scores = 0
         self.rand = rand
 
     def init_fit(self):
         if self.name == 'sgd':
             from sklearn.linear_model import SGDClassifier
             self.model = SGDClassifier(random_state=self.rand)
+        elif self.name =='randforest':
+            self.model = RandomForestClassifier(random_state=self.rand)
         elif self.name == 'svc':
             from sklearn.svm import SVC
             self.model = SVC()
@@ -36,17 +38,28 @@ class classification:
         return(self.return_val)
 
     def predict_scores(self,predict_val):
-        self.scores = self.model.decision_function(predict_val)
-        return(self.scores)
+        #self.scores = self.model.decision_function(predict_val)
+        scores = self.model.decision_function(predict_val)
+        return(scores)
 
-    def cross_valid():  # Needs work
+    def cross_valid(self,num=5):  # Needs work
         from sklearn.model_selection import cross_val_score
-        cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring="accuracy")
+        cross_scores = cross_val_score(self.model, self.X, self.labels, cv=num, scoring="accuracy")
+        return(cross_scores)
 
-    def confus_mat():  # Needs work
+    def confus_mat(self,num=5):  # Needs work
         from sklearn.model_selection import cross_val_predict
         from sklearn.metrics import confusion_matrix
-        y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)
-        confusion_matrix(y_train_5, y_train_pred)
+        y_pred = cross_val_predict(self.model, self.X, self.labels, cv=num)
+        mat_scores = confusion_matrix(self.labels, y_pred)
+        return(mat_scores)
+
+    def prec_recall():
+        from sklearn.model_selection import cross_val_predict
+        from sklearn.metrics import precision_score, recall_score
+        y_pred = cross_val_predict(self.model, self.X, self.labels, cv=num)
+        prec = precision_score(self.labels, y_pred)
+        recall = recall_score(y_train_5, y_train_pred)
+        return(prec,recall)
 
 #==================================================================================#
