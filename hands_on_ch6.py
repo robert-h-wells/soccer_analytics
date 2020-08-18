@@ -72,14 +72,14 @@ data_labels = data_json['Score'].copy()
 data_labels_val = list(set(data_labels))
 
 data_labels_new = data_labels
-if 1==1:
+if 1==0:
     for i in range(len(data_labels)):
         if data_labels[i] > 0:
             data_labels_new[i] = 1
         else:
             data_labels_new[i] = 0
 
-if 1==0:
+if 1==1:
     for i in range(len(data_labels)):
         if X[i,1] > 5 and X[i,0] > 15:
             data_labels_new[i] = 1
@@ -116,7 +116,46 @@ plt.show()
 print(tree_clf.predict_proba([[10,2]]))
 
 # Regression
-tree_reg = DecisionTreeRegressor(random_state=42, max_depth=2)
-tree_reg.fit(X, data_labels)
-plot_regression_predictions(tree_reg, X, data_labels, axes=[min(X[:,0]),max(X[:,0]),min(X[:,1]),max(X[:,1])])
+if 1==1:   # not working with my data
+    tree_reg = DecisionTreeRegressor(random_state=42, max_depth=2)
+    # need to change X to a 1d array
+    X2 = X[:,0]
+    tree_reg.fit(X2, data_labels)
+    plot_regression_predictions(tree_reg, X2, data_labels, axes=[min(X[:,0]),max(X[:,0]),min(X[:,1]),max(X[:,1])])
+    plt.show()
+
+np.random.seed(42)
+m = 200
+X = np.random.rand(m, 1)
+y = 4 * (X - 0.5) ** 2
+y = y + np.random.randn(m, 1) / 10
+from sklearn.tree import DecisionTreeRegressor
+
+tree_reg = DecisionTreeRegressor(max_depth=2, random_state=42)
+tree_reg.fit(X, y)
+tree_reg1 = DecisionTreeRegressor(random_state=42, max_depth=2)
+tree_reg2 = DecisionTreeRegressor(random_state=42, max_depth=3)
+tree_reg1.fit(X, y)
+tree_reg2.fit(X, y)
+
+fig, axes = plt.subplots(ncols=2, figsize=(10, 4), sharey=True)
+plt.sca(axes[0])
+plot_regression_predictions(tree_reg1, X, y)
+for split, style in ((0.1973, "k-"), (0.0917, "k--"), (0.7718, "k--")):
+    plt.plot([split, split], [-0.2, 1], style, linewidth=2)
+plt.text(0.21, 0.65, "Depth=0", fontsize=15)
+plt.text(0.01, 0.2, "Depth=1", fontsize=13)
+plt.text(0.65, 0.8, "Depth=1", fontsize=13)
+plt.legend(loc="upper center", fontsize=18)
+plt.title("max_depth=2", fontsize=14)
+
+plt.sca(axes[1])
+plot_regression_predictions(tree_reg2, X, y, ylabel=None)
+for split, style in ((0.1973, "k-"), (0.0917, "k--"), (0.7718, "k--")):
+    plt.plot([split, split], [-0.2, 1], style, linewidth=2)
+for split in (0.0458, 0.1298, 0.2873, 0.9040):
+    plt.plot([split, split], [-0.2, 1], "k:", linewidth=1)
+plt.text(0.3, 0.5, "Depth=2", fontsize=13)
+plt.title("max_depth=3", fontsize=14)
+
 plt.show()
