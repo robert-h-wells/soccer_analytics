@@ -15,9 +15,10 @@ from sklearn.preprocessing import PolynomialFeatures
 import tools as tl
 import plots as pl
 import pass_paths as mn 
+import classification as clas
 import regression as regres
 
-# Have finished this code with repression.py
+# Have finished this code with classification.py
 
 # The functions defined here are still very useful
 
@@ -80,14 +81,16 @@ if 1==1:
 
 
 # linear SVM
-if 1==0:
+if 1==1:
 
-    model_type = regres.regression(X, data_labels_new, name='svm')
+    model_type = clas.classification(X, data_labels_new, name='linear_svm')
 
     svm_clf = Pipeline([
             ("scaler", model_type.init(1)),
             ("linear_svc", model_type.init_fit()),
         ])
+
+    print(svm_clf["linear_svc"])
 
     svm_clf.fit(X, data_labels_new)
     X_scaled = svm_clf["scaler"].fit_transform(X)
@@ -97,9 +100,9 @@ if 1==0:
     plt.show()
 
 # polynomial SVM
-if 1==0:
+if 1==1:
 
-    model_type = regres.regression(X, data_labels_new,name='svm')
+    model_type = clas.classification(X, data_labels_new,name='svm')
 
     polynomial_svm_clf = Pipeline([
             ("poly_features", model_type.init(2,degree_val=3)),
@@ -115,7 +118,7 @@ if 1==0:
 # Polynomial Kernel
 if 1==1:
 
-    model_type = regres.regression(X, data_labels_new,name='poly_kernel')
+    model_type = clas.classification(X, data_labels_new,name='poly_kernel')
 
     poly_kernel_svm_clf = Pipeline([
             ("scaler", model_type.init(1)),
@@ -127,7 +130,7 @@ if 1==1:
 # Gaussian RBF Kernel
 if 1==1:
 
-    model_type = regres.regression(X, data_labels_new,name='gauss_rbf_kernel')
+    model_type = clas.classification(X, data_labels_new,name='gauss_rbf_kernel')
 
     rbf_kernel_svm_clf = Pipeline([
             ("scaler", model_type.init(1)),

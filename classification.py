@@ -17,7 +17,7 @@ class classification:
         self.model = []
         self.rand = rand
 
-    def init(self,val=0,degree=2):  # Pre-processing data
+    def init(self,val=0,degree_val=2):  # Pre-processing data
         if val == 1:
             from sklearn.preprocessing import StandardScaler
             return(StandardScaler())
@@ -25,7 +25,7 @@ class classification:
             from sklearn.preprocessing import PolynomialFeatures
             return(PolynomialFeatures(degree=degree_val, include_bias=False))
 
-    def init_fit(self):
+    def init_fit(self,c_val=1):
         if self.name == 'sgd':
             from sklearn.linear_model import SGDClassifier
             self.model = SGDClassifier(random_state=self.rand)
@@ -34,9 +34,21 @@ class classification:
             from sklearn.ensemble import RandomForestClassifier
             self.model = RandomForestClassifier(random_state=self.rand)
 
-        elif self.name == 'svc':
+        elif self.name == 'svm':
             from sklearn.svm import SVC
             self.model = SVC()
+
+        elif self.name == 'poly_kernel':
+            from sklearn.svm import SVC
+            self.model = SVC(kernel="poly", degree=3, coef0=1, C=5)
+
+        elif self.name == 'gauss_rbf_kernel':
+            from sklearn.svm import SVC
+            self.model = SVC(kernel="rbf", gamma=5, C=10)
+
+        elif self.name == 'linear_svm':
+             from sklearn.svm import LinearSVC
+             self.model = LinearSVC(C=c_val, loss="hinge")
 
         elif self.name == 'kneighbors':
             from sklearn.neighbors import KNeighborsClassifier
