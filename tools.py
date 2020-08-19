@@ -234,6 +234,72 @@ def get_indiv_score(player_list,poss_data,poss_score):
 
     return(indiv_score,player_in_path)
 #===============================================================================================#
+def get_path_info(path_length,num_players,poss_score):
+    # input needed
+    # poss_score,path_length,num_players
+
+    values_length = []
+    values_num_players = []
+    values_all = []
+    values_total = []
+
+    sort_length = sorted(set(path_length))
+    sort_num_players = sorted(set(num_players))
+    sort_score = sorted(set(poss_score))
+
+    for i in sort_length:
+        for j in sort_num_players:
+
+            counts_total = 0
+
+            for k in sort_score:
+        
+                counts_length = 0 
+                counts_players = 0
+                counts_all = 0
+
+                for ii in range(len(poss_score)):
+
+                    # same length gives same score
+                    if path_length[ii] == i and poss_score[ii] == k:
+                        counts_length += 1
+
+                    # same num players give same score
+                    if num_players[ii] == j and poss_score[ii] == k:
+                        counts_players += 1
+
+                    # same length and num players give same score
+                    if path_length[ii] == i and num_players[ii] == j and poss_score[ii] == k:
+                        counts_all += 1
+
+                    # find number of pathways at length and num players
+                    if path_length[ii] == i and num_players[ii] == j:
+                        counts_total += 1
+
+                if counts_length > 0:  values_length.append([i,k,counts_length])
+                if counts_players > 0: values_num_players.append([j,k,counts_players])
+                if counts_all > 0: values_all.append([i,j,k,counts_all])  
+
+            if counts_total > 0: values_total.append([i,j,counts_total])
+
+    return(values_length,values_num_players,values_all,values_total)
+#===============================================================================================#
+def get_percent_poss_score(values_all,values_total):
+
+    percent_poss_score = []
+    val = 0
+    for i in range(len(values_all)):
+        if (values_all[i][0] != values_total[val][0] or values_all[i][1] 
+            != values_total[val][1]):
+            val += 1
+
+        if (values_all[i][0] == values_total[val][0] and values_all[i][1] 
+            == values_total[val][1]):
+            percent = values_all[i][-1] / values_total[val][-1]
+            percent_poss_score.append([values_all[i][0],values_all[i][1],values_all[i][2],percent])
+
+    return(percent_poss_score)    
+#===============================================================================================#
 def copy_files_tools(match_data):
     """ Copy files from source ot game_data folder """
 

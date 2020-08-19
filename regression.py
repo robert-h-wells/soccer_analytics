@@ -85,14 +85,3 @@ class regression:
         return(self.model.intercept_, self.model.coef_)
 
 #==================================================================================#
-
-if 1==0:
-    # Linear Regression
-    lin_reg.intercept_, lin_reg.coef_
-
-    # Stochastic Gradient Descent
-    sgd_reg.intercept_, sgd_reg.coef_
-
-    # Polynomial Regression
-    lin_reg.fit(X_poly, y)
-    # Need to look into this, might have to change self.X to this X_poly
