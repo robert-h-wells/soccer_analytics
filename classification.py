@@ -25,14 +25,20 @@ class classification:
             from sklearn.preprocessing import PolynomialFeatures
             return(PolynomialFeatures(degree=degree_val, include_bias=False))
 
-    def init_fit(self,c_val=1):
+    def init_fit(self,c_val=1,depth=2):
         if self.name == 'sgd':
             from sklearn.linear_model import SGDClassifier
             self.model = SGDClassifier(random_state=self.rand)
 
+        elif self.name == 'decis_tree':
+            from sklearn.tree import DecisionTreeClassifier
+            print('Depth == ',depth)
+            self.model = DecisionTreeClassifier(max_depth=depth)
+
         elif self.name =='rand_forest':
             from sklearn.ensemble import RandomForestClassifier
-            self.model = RandomForestClassifier(random_state=self.rand)
+            print('Lots of parameters already set!')
+            self.model = RandomForestClassifier(n_estimators=500, max_leaf_nodes=16, n_jobs=-1)
 
         elif self.name == 'svm':
             from sklearn.svm import SVC
@@ -66,6 +72,9 @@ class classification:
         return_val = self.model.predict(predict_val)
         return(return_val)
 
+    def predict_percent(self,predict_val):
+        pred_percent = self.model.predict_proba(predict_val)
+
     def predict_scores(self,predict_val):
         scores = self.model.decision_function(predict_val)
         return(scores)
@@ -82,13 +91,20 @@ class classification:
         mat_scores = confusion_matrix(self.labels, y_pred)
         return(mat_scores)
 
-    def prec_recall():
+    def prec_recall(self,num=5):
         from sklearn.model_selection import cross_val_predict
         from sklearn.metrics import precision_score, recall_score
         y_pred = cross_val_predict(self.model, self.X, self.labels, cv=num)
         prec = precision_score(self.labels, y_pred)
-        recall = recall_score(y_train_5, y_train_pred)
+        recall = recall_score(self.labels, y_pred)
         return(prec,recall)
+
+    def accuracy(self,test,x_test,y_test):
+        from sklearn.metrics import accuracy_score
+        self.model.fit(self.X, self.labels)
+        y_pred = self.model.predict(x_test)
+        val = accuracy_score(y_test, y_pred)
+        return accuracy_score(y_test, y_pred)
 
 #==================================================================================#
 def plot_svc_decision_boundary(svm_clf, xmin, xmax):

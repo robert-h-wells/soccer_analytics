@@ -19,7 +19,7 @@ class regression:
             from sklearn.preprocessing import PolynomialFeatures
             return(PolynomialFeatures(degree=degree_val, include_bias=False))
 
-    def init_fit(self,c_val=1,degree_val=2):
+    def init_fit(self,c_val=1,degree_val=2,depth=2):
         if self.name == 'linear':
             from sklearn.linear_model import LinearRegression
             self.model = lin_reg = LinearRegression()
@@ -31,6 +31,10 @@ class regression:
         elif self.name == 'svm':
             from sklearn.svm import LinearSVR
             self.model = LinearSVR(epsilon=1.5)
+
+        elif self.name == 'decis_tree':
+            from sklearn.tree import DecisionTreeRegressor
+            tree_reg = DecisionTreeRegressor(max_depth=depth)
 
         elif self.name == 'svm_poly':
             from sklearn.svm import SVR

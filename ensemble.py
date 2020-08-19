@@ -14,12 +14,8 @@ class ensemble:
         self.rand = rand
 
 #==================================================================================#
-from sklearn.tree import DecisionTreeClassifier
-tree_clf = DecisionTreeClassifier(max_depth=2)
-tree_clf.fit(X, y)
 
-tree_clf.predict_proba([[5, 1.5]])
-
+from sklearn.tree import export_graphviz
 f = open("pathway_scores.dot", 'w')
 export_graphviz(
         tree_clf,
@@ -31,16 +27,7 @@ export_graphviz(
     )
 
 
-from sklearn.tree import DecisionTreeRegressor
-tree_reg = DecisionTreeRegressor(max_depth=2)
-tree_reg.fit(X, y)
-
 # Voting classifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import VotingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-
 log_clf = LogisticRegression()
 rnd_clf = RandomForestClassifier()
 svm_clf = SVC()
@@ -76,15 +63,6 @@ bag_clf = BaggingClassifier(
 
 bag_clf.fit(X_train, y_train)
 bag_clf.oob_score_
-
-
-# Random Forests
-from sklearn.ensemble import RandomForestClassifier
-
-rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=16, n_jobs=-1)
-rnd_clf.fit(X_train, y_train)
-
-y_pred_rf = rnd_clf.predict(X_test)
 
 # Bagging Classifier equal to RandomForestClassifier
 bag_clf = BaggingClassifier(
