@@ -13,6 +13,42 @@ class ensemble:
         self.model = []
         self.rand = rand
 
+    def bagging(self,oob_val=False):
+        from sklearn.ensemble import BaggingClassifier
+        from sklearn.tree import DecisionTreeClassifier
+        self.model = BaggingClassifier(
+            DecisionTreeClassifier(), n_estimators=500,
+            max_samples=100, bootstrap=True, n_jobs=-1, oob_score_=oob_val)
+
+        return(self.model)
+
+    def bag_rand_forest(self):
+        bag_clf = BaggingClassifier(
+            DecisionTreeClassifier(max_features="auto", max_leaf_nodes=16),
+            n_estimators=500, max_samples=1.0, bootstrap=True, n_jobs=-1)
+
+    def oob_score(self):
+        val = self.model.oob_score_
+        return(val)
+
+    def predictor(self,predict_val):
+        return_val = self.model.predict(predict_val)
+        return(return_val)
+
+    def predict_percent(self,predict_val):
+        pred_percent = self.model.predict_proba(predict_val)
+
+    def predict_scores(self,predict_val):
+        scores = self.model.decision_function(predict_val)
+        return(scores)
+
+    def accuracy(self,test,x_test,y_test):
+        from sklearn.metrics import accuracy_score
+        self.model.fit(self.X, self.labels)
+        y_pred = self.model.predict(x_test)
+        val = accuracy_score(y_test, y_pred)
+        return accuracy_score(y_test, y_pred)
+
 #==================================================================================#
 
 from sklearn.tree import export_graphviz
@@ -38,36 +74,6 @@ voting_clf = VotingClassifier(
 voting_clf.fit(X_train, y_train)
 
 
-# Accuracy
-from sklearn.metrics import accuracy_score
-for clf in (log_clf, rnd_clf, svm_clf, voting_clf):
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    print(clf.__class__.__name__, accuracy_score(y_test, y_pred))
-
-
-# Bagging and Pasting
-from sklearn.ensemble import BaggingClassifier
-from sklearn.tree import DecisionTreeClassifier
-
-bag_clf = BaggingClassifier(
-    DecisionTreeClassifier(), n_estimators=500,
-    max_samples=100, bootstrap=True, n_jobs=-1)
-bag_clf.fit(X_train, y_train)
-y_pred = bag_clf.predict(X_test)
-
-# Out of bag
-bag_clf = BaggingClassifier(
-    DecisionTreeClassifier(), n_estimators=500,
-    bootstrap=True, n_jobs=-1, oob_score=True)
-
-bag_clf.fit(X_train, y_train)
-bag_clf.oob_score_
-
-# Bagging Classifier equal to RandomForestClassifier
-bag_clf = BaggingClassifier(
-    DecisionTreeClassifier(max_features="auto", max_leaf_nodes=16),
-    n_estimators=500, max_samples=1.0, bootstrap=True, n_jobs=-1)
 
 
 # Feature importance
