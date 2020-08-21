@@ -42,9 +42,6 @@ def get_poss_player_list(data):
 def get_poss_data(data,poss_list,player_list):
     # create lists of each player and each event that occurs along each pathways
 
-    # TO-DO : Add in starting position of pathway as a score, add in certain events such
-    # as dribbling, etc.
-
     poss_data = []
     poss_name_data = []
     
@@ -58,7 +55,6 @@ def get_poss_data(data,poss_list,player_list):
                 # make sure they are arsenal players
                 player_val = [x[0] for x in player_list]
                 if data[j]['player']['id'] in player_val: 
-                    # should check  for certain events NOT IN YET
 
                     new_list.append([data[j]['player']['id'],data[j]['type']['id']])
                     new_name_list.append([data[j]['player']['name'],data[j]['type']['name']])
@@ -69,6 +65,18 @@ def get_poss_data(data,poss_list,player_list):
         poss_name_data[i] = new_name_list
 
     return(poss_data, poss_name_data)
+#===============================================================================================#
+def get_path_pos(data,poss_list):
+    # get the starting position of each pathway
+    # give value based on where pathway begins 0-5  TO-DO
+
+    path_start_pos = []
+
+    for i in range(len(poss_list)):
+        path_start_pos.append(poss_lsit[i][0]['location'])
+
+    return(path_start_pos)
+
 #===============================================================================================#
 def get_path_score(data,poss_list):
     # determine result of the possession pathway and give score

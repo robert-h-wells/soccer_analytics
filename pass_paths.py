@@ -51,6 +51,10 @@ def main():
   y = 41 in x
   y = int(y == True)
 
+  # TO-DO, Determine beginning location of paths -> sort based on y and x
+  for i in range(0,3):
+    print(data[poss_list[i][0]]['location'])
+
   # determine pathway points for each possession
   poss_score = tl.get_path_score(data,poss_list)
   print(np.shape(poss_score))
