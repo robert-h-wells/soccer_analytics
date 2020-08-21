@@ -46,12 +46,17 @@ def main():
 
   # create list of each player and event in each possession pathway
   poss_data, poss_name_data = tl.get_poss_data(data,poss_list,player_list)
+  print(poss_name_data[0]) ; print()
+  x = set([x[1] for x in poss_data[0]])
+  y = 41 in x
+  y = int(y == True)
 
   # determine pathway points for each possession
   poss_score = tl.get_path_score(data,poss_list)
+  print(np.shape(poss_score))
 
   # determine player score (sum of pathway score) and number of pathways they are in
-  indiv_score, player_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
+  indiv_score, player_in_path, event_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
 
 
   #==== sort data by length, number of players, etc. ====#
@@ -67,7 +72,7 @@ def main():
     num_players[i] = len(set([x[0] for x in poss_data[i]]))
 
   ## score, length of path, number of players, is player present
-  total_data_ = [path_length,num_players,*([i for i in player_in_path]),poss_score]
+  total_data_ = [path_length,num_players,*([i for i in player_in_path]),*([j for j in event_in_path]),poss_score]
   total_data = np.transpose(total_data_)
   
   # list of player names

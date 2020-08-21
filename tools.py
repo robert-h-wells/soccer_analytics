@@ -40,7 +40,7 @@ def get_poss_player_list(data):
     return(poss_list, player_list)
 #===============================================================================================#
 def get_poss_data(data,poss_list,player_list):
-    # create lists of each player and each even that occurs along each pathways
+    # create lists of each player and each event that occurs along each pathways
 
     # TO-DO : Add in starting position of pathway as a score, add in certain events such
     # as dribbling, etc.
@@ -212,30 +212,45 @@ def get_indiv_score(player_list,poss_data,poss_score):
     # sum of pathway points = individual score, finds number of pathways involved 
     # returns 1 or 0 for each pathway if player is in pathway
 
+    # initialize list size
     indiv_score = []
     player_in_path = [[0 for i in range(len(poss_data))] for j in range(len(player_list))]
+    player_in_path_check = [[0 for i in range(len(poss_data))] for j in range(len(player_list))]
+
+    event_list = [14,16,39,43]
+    event_in_path = [[0 for i in range(len(poss_data))] for j in range(len(event_list))]
 
     for val, (id_val, type_val) in enumerate(player_list):
+        #print(val, id_val, type_val) ; print()
         score = 0
         num_events = 0
         
+        # check each pathway for players included 
         for i in range(len(poss_data)):
-            event_val = 0 
 
-            for j in range(len(poss_data[i])):
-                if id_val == poss_data[i][j][0]:
-                    event_val = 1
+            # player in pathway
+            player_set = set([x[0] for x in poss_data[i]])
+            player_val = id_val in player_set
+            palyer_val = int(player_val == True)
+            player_in_path[val][i] = player_val
 
-            if event_val == 1:
+            # give pathway score to players in pathway
+            if player_val == 1:
                 score += poss_score[i]
                 num_events += 1
                 player_in_path[val][i] = 1
-            elif event_val == 0:
-                player_in_path[val][i] = 0
 
         indiv_score.append([score,num_events])
 
-    return(indiv_score,player_in_path)
+    for val, id_val in enumerate(event_list):
+
+        for i in range(len(poss_data)):
+            event_set = set([x[1] for x in poss_data[i]])
+            event_val = id_val in event_set
+            event_val = int(event_val == True)
+            event_in_path[val][i] = event_val
+
+    return(indiv_score,player_in_path,event_in_path)
 #===============================================================================================#
 def get_path_info(path_length,num_players,poss_score):
     # input needed

@@ -13,19 +13,23 @@ import plots as pl
 def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
 
     # Unpack data from pass_paths
-    path_length, num_players, *_, poss_score = total_data_
+    path_length, num_players, *_, a,b,c,d, poss_score = total_data_
     total_data = np.transpose(total_data_)
+    print(np.shape(total_data))
     values_length, values_num_players = val_data
     poss_list, player_list = list_data
+
+    event_in_path = [a,b,c,d]
+    print(np.shape(event_in_path))
 
     sort_length = sorted(set(path_length))
     sort_num_players = sorted(set(num_players))
     sort_score = sorted(set(poss_score))
 
     # Make plots of the important attributes
-    if 1==0:
+    if 1==1:
 
-        if 1==1:  # Make 2 plots
+        if 1==0:  # Make 2 plots
 
             # score of each pathway vs. length of pathway 
             plot_data = [[],[],[]]
@@ -109,7 +113,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
         # score of each pathway if certain players are in or not      
         if 1==0:
             #for i in range(len(nam)):
-            for i in range(3):
+            for i in range(2):
 
                 # FOR SCATTER, alpha = 0.1 for easier visualization 
 
@@ -120,6 +124,22 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
                 title = [nam[i]]
                 xlabel = ['Path Length','Num Players','Num Players']
                 ylabel = ['Score','Score','Path Length']
+                pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
+
+        if 1==1:
+            event_nam = ['Dribble','Shot','Dribbled Past','Carry']
+            for i in range(4):
+
+                title = [event_nam[i]]
+                plot_data = [[],[],[]]
+                xlabel = ['Path Length','Num Players','Num Players']
+                ylabel = ['Score','Score','Path Length']
+                #plot_data[0] = [path_length,poss_score,[x[-5+i] for x in total_data]]
+                plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
+
+
+                plot_data[1] = [num_players,poss_score,[x[-5+i] for x in total_data]]
+                plot_data[2] = [num_players,path_length,[x[-5+i] for x in total_data]]
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
 
