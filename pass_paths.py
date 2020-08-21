@@ -9,6 +9,7 @@ from shutil import copyfile
 
 import tools as tl
 import plots as pl
+import ml_test as ml
 
 #=========================================================================================================================#
 
@@ -87,20 +88,20 @@ def main():
   sort_poss_list = [x for _,x in sorted(zip(poss_score,poss_list), reverse=True)]
   sort_poss_score = sorted(poss_score, reverse=True)
 
-  for ii in range(0,2):
+  for ii in range(3,2):
     fig, ax=plt.subplots()
     pl.get_pitch()
     plt.ylim(100, -10)
     pl.plot_pass_path(data,sort_poss_list[ii][0],sort_poss_list[ii][1])
 
-  #plt.gca().invert_yaxis()
-  plt.show()
+    #plt.gca().invert_yaxis()
+    plt.show()
   #=============================================================================================================#
   
   val_data = [values_length,values_num_players]
   list_data = [poss_list, player_list]
 
-  return(total_data_,val_data,percent_poss_score,list_data,nam)
+  ml.ml_run(total_data_,val_data,percent_poss_score,list_data,nam)
 #=========================================================================================================================#
 
 

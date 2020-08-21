@@ -42,6 +42,9 @@ def get_poss_player_list(data):
 def get_poss_data(data,poss_list,player_list):
     # create lists of each player and each even that occurs along each pathways
 
+    # TO-DO : Add in starting position of pathway as a score, add in certain events such
+    # as dribbling, etc.
+
     poss_data = []
     poss_name_data = []
     
