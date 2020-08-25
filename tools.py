@@ -67,8 +67,7 @@ def get_poss_data(data,poss_list,player_list):
     return(poss_data, poss_name_data)
 #===============================================================================================#
 def get_path_pos(data,poss_list):
-    # get the starting position of each pathway
-    # give value based on where pathway begins 1-4  TO-DO
+    # get the starting position of each pathway and assign value
 
     path_start_pos = []
     path_start_val = []

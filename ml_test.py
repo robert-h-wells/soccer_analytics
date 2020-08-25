@@ -13,19 +13,20 @@ import plots as pl
 def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
 
     # Unpack data from pass_paths
-    path_length, num_players, *_, a,b,c,d, poss_score = total_data_
+    #path_length, num_players, *_, a,b,c,d, poss_score = total_data_
+    path_length, num_players, player_in_path, event_in_path, poss_score = total_data_
     total_data = np.transpose(total_data_)
     values_length, values_num_players = val_data
     poss_list, player_list = list_data
 
-    event_in_path = [a,b,c,d]
+    #event_in_path = [a,b,c,d]
 
     sort_length = sorted(set(path_length))
     sort_num_players = sorted(set(num_players))
     sort_score = sorted(set(poss_score))
 
     # Make plots of the important attributes
-    if 1==0:
+    if 1==1:
 
         if 1==0:  # Make 2 plots
 
@@ -59,12 +60,12 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
         if 1 == 0:
             mult_dat = np.zeros((len(poss_score),2))
             for i in range(len(poss_score)):
-                if total_data[i][9] == 1 and total_data[i][10] == 1:
+                if player_in_path[9][i] == 1 and player_in_path[10][i] == 1:
                     mult_dat[i,0] = 1
                 else:
                     mult_dat[i,0] = 0
 
-                if total_data[i][2] == 1 and total_data[i][3] == 1:
+                if player_in_path[2][i] == 1 and player_in_path[3][i] == 1:
                     mult_dat[i,1] = 1
                 else:
                     mult_dat[i,1] = 0
@@ -109,22 +110,26 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
 
 
         # score of each pathway if certain players are in or not      
-        if 1==0:
+        if 1==1:
             #for i in range(len(nam)):
             for i in range(2):
 
                 # FOR SCATTER, alpha = 0.1 for easier visualization 
 
                 plot_data = [[],[],[]]
-                plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
-                plot_data[1] = [num_players,poss_score,[x[i+2] for x in total_data]]
-                plot_data[2] = [num_players,path_length,[x[i+2] for x in total_data]]
+                #plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
+                #plot_data[1] = [num_players,poss_score,[x[i+2] for x in total_data]]
+                #plot_data[2] = [num_players,path_length,[x[i+2] for x in total_data]]
+
+                plot_data[0] = [path_length,poss_score,[x for x in player_in_path[i]]]
+                plot_data[1] = [num_players,poss_score,[x for x in player_in_path[i]]]
+                plot_data[2] = [num_players,path_length,[x for x in player_in_path[i]]]
                 title = [nam[i]]
                 xlabel = ['Path Length','Num Players','Num Players']
                 ylabel = ['Score','Score','Path Length']
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
-        if 1==1:
+        if 1==0:
             event_nam = ['Dribble','Shot','Dribbled Past','Carry']
             for i in range(4):
 

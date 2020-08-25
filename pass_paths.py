@@ -72,7 +72,11 @@ def main():
     num_players[i] = len(set([x[0] for x in poss_data[i]]))
 
   ## score, length of path, number of players, is player present
-  total_data_ = [path_length,num_players,*([i for i in player_in_path]),*([j for j in event_in_path]),poss_score]
+  #total_data_ = [path_length,num_players,*([i for i in player_in_path]),*([j for j in event_in_path]),poss_score]
+  total_data_ = [path_length,num_players,([i for i in player_in_path]),([j for j in event_in_path]),poss_score]
+  print(len(total_data_))
+  for i in range(len(total_data_)):
+    print(len(total_data_[i]))
   total_data = np.transpose(total_data_)
   
   # list of player names
