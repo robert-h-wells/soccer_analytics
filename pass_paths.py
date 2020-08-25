@@ -48,9 +48,7 @@ def main():
   poss_data, poss_name_data = tl.get_poss_data(data,poss_list,player_list)
 
   # TO-DO, Determine beginning location of paths -> sort based on y and x
-  tl.get_path_pos(data,poss_list)
-  #for i in range(0,3):
-  #  print(data[poss_list[i][0]]['location'])
+  path_start_pos, path_start_val = tl.get_path_pos(data,poss_list)
 
   # determine pathway points for each possession
   poss_score = tl.get_path_score(data,poss_list)
@@ -72,11 +70,8 @@ def main():
     num_players[i] = len(set([x[0] for x in poss_data[i]]))
 
   ## score, length of path, number of players, is player present
-  #total_data_ = [path_length,num_players,*([i for i in player_in_path]),*([j for j in event_in_path]),poss_score]
-  total_data_ = [path_length,num_players,([i for i in player_in_path]),([j for j in event_in_path]),poss_score]
-  print(len(total_data_))
-  for i in range(len(total_data_)):
-    print(len(total_data_[i]))
+  total_data_ = ([path_length,num_players,([i for i in player_in_path]),
+                ([j for j in event_in_path]),path_start_val,poss_score])
   total_data = np.transpose(total_data_)
   
   # list of player names

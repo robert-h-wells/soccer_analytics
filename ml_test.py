@@ -13,13 +13,11 @@ import plots as pl
 def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
 
     # Unpack data from pass_paths
-    #path_length, num_players, *_, a,b,c,d, poss_score = total_data_
-    path_length, num_players, player_in_path, event_in_path, poss_score = total_data_
+    (path_length, num_players, player_in_path, event_in_path, 
+            path_start_val, poss_score) = total_data_
     total_data = np.transpose(total_data_)
     values_length, values_num_players = val_data
     poss_list, player_list = list_data
-
-    #event_in_path = [a,b,c,d]
 
     sort_length = sorted(set(path_length))
     sort_num_players = sorted(set(num_players))
@@ -45,7 +43,6 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
             
             # score of each pathways vs. # of players involved
             plot_data = [[],[]]
-
             plot_data[0] = ([[x[0] for x in values_num_players],[x[1] for x in values_num_players],
                             [x[2] for x in values_num_players]])
             plot_data[1] = num_players
@@ -58,6 +55,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
 
         # want to see how groups of players affect important attributes :: TO-DO IMPROVE
         if 1 == 0:
+
             mult_dat = np.zeros((len(poss_score),2))
             for i in range(len(poss_score)):
                 if player_in_path[9][i] == 1 and player_in_path[10][i] == 1:
@@ -106,45 +104,50 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
                     plt.ylabel('Num Players')
                     plt.title('Pathway Score: '+str(val))
 
-                    fig.colorbar(im)     
-
+                    fig.colorbar(im)
 
         # score of each pathway if certain players are in or not      
-        if 1==1:
+        if 1==0:
+
             #for i in range(len(nam)):
             for i in range(2):
 
                 # FOR SCATTER, alpha = 0.1 for easier visualization 
-
                 plot_data = [[],[],[]]
-                #plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
-                #plot_data[1] = [num_players,poss_score,[x[i+2] for x in total_data]]
-                #plot_data[2] = [num_players,path_length,[x[i+2] for x in total_data]]
-
                 plot_data[0] = [path_length,poss_score,[x for x in player_in_path[i]]]
                 plot_data[1] = [num_players,poss_score,[x for x in player_in_path[i]]]
                 plot_data[2] = [num_players,path_length,[x for x in player_in_path[i]]]
+
                 title = [nam[i]]
                 xlabel = ['Path Length','Num Players','Num Players']
                 ylabel = ['Score','Score','Path Length']
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
+        # score based on events in pathway
         if 1==0:
+
             event_nam = ['Dribble','Shot','Dribbled Past','Carry']
-            for i in range(4):
+            for i in range(len(event_nam)):
 
                 title = [event_nam[i]]
                 plot_data = [[],[],[]]
                 xlabel = ['Path Length','Num Players','Num Players']
                 ylabel = ['Score','Score','Path Length']
-                #plot_data[0] = [path_length,poss_score,[x[-5+i] for x in total_data]]
-                plot_data[0] = [path_length,poss_score,[x[i+2] for x in total_data]]
 
-
-                plot_data[1] = [num_players,poss_score,[x[-5+i] for x in total_data]]
-                plot_data[2] = [num_players,path_length,[x[-5+i] for x in total_data]]
+                plot_data[0] = [path_length,poss_score,[x for x in event_in_path[i]]]
+                plot_data[1] = [num_players,poss_score,[x for x in event_in_path[i]]]
+                plot_data[2] = [num_players,path_length,[x for x in event_in_path[i]]]
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
+        # scored based on beginning position of pathway
+        if 1==0:
+            for i in range(1,5):
+                x = [j for j, e in enumerate(path_start_val) if e == i]
+                x2 = [path_start_val[i] for i in x]
+                x3 = [poss_score[i] for i in x]
+                fig, ax = plt.subplots()
+                plt.hist(x3)
+                plt.title('Starting Pathway Value '+str(i))     
 
 
         if 1==0:  # this is pretty boring atm
