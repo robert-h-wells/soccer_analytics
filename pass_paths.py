@@ -46,18 +46,14 @@ def main():
 
   # create list of each player and event in each possession pathway
   poss_data, poss_name_data = tl.get_poss_data(data,poss_list,player_list)
-  print(poss_name_data[0]) ; print()
-  x = set([x[1] for x in poss_data[0]])
-  y = 41 in x
-  y = int(y == True)
 
   # TO-DO, Determine beginning location of paths -> sort based on y and x
-  for i in range(0,3):
-    print(data[poss_list[i][0]]['location'])
+  tl.get_path_pos(data,poss_list)
+  #for i in range(0,3):
+  #  print(data[poss_list[i][0]]['location'])
 
   # determine pathway points for each possession
   poss_score = tl.get_path_score(data,poss_list)
-  print(np.shape(poss_score))
 
   # determine player score (sum of pathway score) and number of pathways they are in
   indiv_score, player_in_path, event_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)

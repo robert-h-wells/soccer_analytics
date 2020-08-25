@@ -68,15 +68,27 @@ def get_poss_data(data,poss_list,player_list):
 #===============================================================================================#
 def get_path_pos(data,poss_list):
     # get the starting position of each pathway
-    # give value based on where pathway begins 0-5  TO-DO
+    # give value based on where pathway begins 1-4  TO-DO
 
     path_start_pos = []
+    path_start_val = []
 
     for i in range(len(poss_list)):
-        path_start_pos.append(poss_lsit[i][0]['location'])
+        path_start_pos.append(data[poss_list[i][0]]['location'])
+        
+        if path_start_pos[i][0] <= 30:
+            path_start_val.append(1)
+        elif path_start_pos[i][0] <= 60:
+            path_start_val.append(2)
+        elif path_start_pos[i][0] <= 90:
+            path_start_val.append(3)
+        elif path_start_pos[i][0] <= 120:
+            path_start_val.append(4)
+        else:
+            print('problem')
+            print(path_start_pos[i])
 
-    return(path_start_pos)
-
+    return(path_start_pos,path_start_val)
 #===============================================================================================#
 def get_path_score(data,poss_list):
     # determine result of the possession pathway and give score
@@ -229,7 +241,7 @@ def get_indiv_score(player_list,poss_data,poss_score):
     event_in_path = [[0 for i in range(len(poss_data))] for j in range(len(event_list))]
 
     for val, (id_val, type_val) in enumerate(player_list):
-        #print(val, id_val, type_val) ; print()
+
         score = 0
         num_events = 0
         
@@ -250,6 +262,7 @@ def get_indiv_score(player_list,poss_data,poss_score):
 
         indiv_score.append([score,num_events])
 
+    # determine what events happen in each pathway
     for val, id_val in enumerate(event_list):
 
         for i in range(len(poss_data)):

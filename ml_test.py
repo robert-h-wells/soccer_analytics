@@ -15,12 +15,10 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
     # Unpack data from pass_paths
     path_length, num_players, *_, a,b,c,d, poss_score = total_data_
     total_data = np.transpose(total_data_)
-    print(np.shape(total_data))
     values_length, values_num_players = val_data
     poss_list, player_list = list_data
 
     event_in_path = [a,b,c,d]
-    print(np.shape(event_in_path))
 
     sort_length = sorted(set(path_length))
     sort_num_players = sorted(set(num_players))
