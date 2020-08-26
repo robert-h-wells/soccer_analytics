@@ -137,6 +137,20 @@ def get_path_score(data,poss_list):
             # DETERMINE POINTS WITH END RESULT FOR TURNOVER PATHWAY, NEED MORE NEGATIVE VALUES         
             elif data[val+1]['possession_team']['name'] != 'Arsenal':  # possesion changes
 
+                poss2 = poss_list[i+1][1]-1 ; poss_val = data[val]['possession']
+                for ii in range(val,poss2):
+                    if data[ii]['possession'] == poss_val +2:
+                        poss2_val = ii -1
+                        break
+                try:
+                    if data[poss2_val]['type']['id'] in [16]:  # 21
+                        print('checks',poss_list[i],data[val]['possession'],data[poss2_val]['possession'],data[poss2_val]['possession']-data[val]['possession'])
+                        print(data[poss2_val])
+                        print(data[poss2_val]['play_pattern']) ; print()
+                
+                except:
+                    pass
+
                 check_play = any('play_pattern' in x for x in data[val+1])
                 check_keeper = any('goalkeeper' in x for x in data[val])
 

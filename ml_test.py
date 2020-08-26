@@ -24,7 +24,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
     sort_score = sorted(set(poss_score))
 
     # Make plots of the important attributes
-    if 1==1:
+    if 1==0:
 
         if 1==0:  # Make 2 plots
 
