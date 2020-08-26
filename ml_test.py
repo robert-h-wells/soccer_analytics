@@ -24,7 +24,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
     sort_score = sorted(set(poss_score))
 
     # Make plots of the important attributes
-    if 1==0:
+    if 1==1:
 
         if 1==0:  # Make 2 plots
 
@@ -109,8 +109,8 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
         # score of each pathway if certain players are in or not      
         if 1==0:
 
-            #for i in range(len(nam)):
-            for i in range(2):
+            for i in range(len(nam)):
+            #for i in range(2):
 
                 # FOR SCATTER, alpha = 0.1 for easier visualization 
                 plot_data = [[],[],[]]
@@ -124,7 +124,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
         # score based on events in pathway
-        if 1==0:
+        if 1==1:
 
             event_nam = ['Dribble','Shot','Dribbled Past','Carry']
             for i in range(len(event_nam)):

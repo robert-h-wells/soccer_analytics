@@ -140,16 +140,16 @@ def get_path_score(data,poss_list):
                 poss2 = poss_list[i+1][1]-1 ; poss_val = data[val]['possession']
                 for ii in range(val,poss2):
                     if data[ii]['possession'] == poss_val +2:
-                        poss2_val = ii -1
+                        poss2_val = ii-1
                         break
-                try:
-                    if data[poss2_val]['type']['id'] in [16]:  # 21
-                        print('checks',poss_list[i],data[val]['possession'],data[poss2_val]['possession'],data[poss2_val]['possession']-data[val]['possession'])
-                        print(data[poss2_val])
-                        print(data[poss2_val]['play_pattern']) ; print()
+                #try:
+                #    if data[poss2_val]['type']['id'] in [16]:  # 21
+                #        print('checks',poss_list[i],data[val]['possession'],data[poss2_val]['possession'],data[poss2_val]['possession']-data[val]['possession'])
+                #        print(data[poss2_val])
+                #        print(data[poss2_val]['play_pattern']) ; print()
                 
-                except:
-                    pass
+                #except:
+                #    pass
 
                 check_play = any('play_pattern' in x for x in data[val+1])
                 check_keeper = any('goalkeeper' in x for x in data[val])
@@ -180,23 +180,50 @@ def get_path_score(data,poss_list):
 
                 elif check_play == True:
                     if data[val+1]['play_pattern']['id'] == 1:  # open play, gave ball away
-                        poss_score[i] = -2
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -7
+                        else:
+                            poss_score[i] = -2
                     elif data[val+1]['play_pattern']['id'] == 2:  # caused a corner kick 
-                        poss_score[i] = -3
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -8
+                        else:
+                            poss_score[i] = -3
                     elif data[val+1]['play_pattern']['id'] == 3:  # caused a free kick
-                        poss_score[i] = -3
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -8
+                        else:
+                            poss_score[i] = -3
                     elif data[val+1]['play_pattern']['id'] == 4:  # caused a throw in
-                        poss_score[i] = -1
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -6
+                        else:
+                            poss_score[i] = -1
                     elif data[val+1]['play_pattern']['id'] == 5:  # other
-                        poss_score[i] = -1
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -6
+                        else:
+                            poss_score[i] = -1
                     elif data[val+1]['play_pattern']['id'] == 6:  # caused counter
-                        poss_score[i] = -2
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -7
+                        else:
+                            poss_score[i] = -2
                     elif data[val+1]['play_pattern']['id'] == 7:  # caused a goal kick
-                        poss_score[i] = -1
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -6
+                        else:
+                            poss_score[i] = -1
                     elif data[val+1]['play_pattern']['id'] == 8:  # other keeper got ball
-                        poss_score[i] = -1
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -6
+                        else:
+                            poss_score[i] = -1
                     elif data[val]['play_pattern']['id'] == 8:  # keeper got the ball but didn't keep possesion
-                        poss_score[i] = 0
+                        if data[poss2_val]['type']['id'] in [16,21]:
+                            poss_score[i] = -5
+                        else:
+                            poss_score[i] = 0
 
                     elif data[val+1]['play_pattern']['id'] == 9: # from kick off
                         poss_score[i] = 0
