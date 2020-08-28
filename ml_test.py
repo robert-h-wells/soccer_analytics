@@ -161,3 +161,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
     
     plt.show()
 #=============================================================================================================#
+
+# NOW NEED TO WORK ON REGRESSION, CATEGORIES FOR EACH PATHWAY FROM BOOK EXAMPLES
+
+#=============================================================================================================#
