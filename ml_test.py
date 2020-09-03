@@ -10,21 +10,21 @@ import tools as tl
 import plots as pl
 
 #=============================================================================================================#
-def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
+def ml_run(df,val_data,percent_poss_score,list_data,nam):
 
     # Unpack data from pass_paths
-    (path_length, num_players, player_in_path, event_in_path, 
-            path_start_val, poss_score) = total_data_
-    total_data = np.transpose(total_data_)
     values_length, values_num_players = val_data
     poss_list, player_list = list_data
 
-    sort_length = sorted(set(path_length))
-    sort_num_players = sorted(set(num_players))
-    sort_score = sorted(set(poss_score))
+    sort_length = sorted(set(df['Path_length']))
+    sort_num_players = sorted(set(df['Num_players']))
+    sort_score = sorted(set(df['Score']))
+
+    event_nam = ['Dribble','Shot','Dribbled_past','Carry']
+
 
     # Make plots of the important attributes
-    if 1==0:
+    if 1==1:
 
         if 1==0:  # Make 2 plots
 
@@ -32,8 +32,8 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
             plot_data = [[],[],[]]
             plot_data[0] = ([[x[0] for x in values_length],[x[1] for x in values_length],
                             [x[2] for x in values_length]])
-            plot_data[1] = path_length
-            plot_data[2] = poss_score
+            plot_data[1] = df['Path_length']
+            plot_data[2] = df['Score']
             title = ['Effect of Pathway Length']
             xlabel = ['Path Length','Path Length','Score']
             ylabel = ['Score','Num Occurences','Num Occurences']
@@ -45,7 +45,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
             plot_data = [[],[]]
             plot_data[0] = ([[x[0] for x in values_num_players],[x[1] for x in values_num_players],
                             [x[2] for x in values_num_players]])
-            plot_data[1] = num_players
+            plot_data[1] = df['Num_players'] 
             title = ['Effect of Number of Players']
             xlabel = ['Num Players','Num Players']
             ylabel = ['Score','Num Occurences']
@@ -56,14 +56,19 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
         # want to see how groups of players affect important attributes :: TO-DO IMPROVE
         if 1 == 0:
 
-            mult_dat = np.zeros((len(poss_score),2))
-            for i in range(len(poss_score)):
-                if player_in_path[9][i] == 1 and player_in_path[10][i] == 1:
+            val1 = nam[9]
+            val2 = nam[10]
+            val3 = nam[2]
+            val4 = nam[3]
+
+            mult_dat = np.zeros((len(df['Score']),2))
+            for i in range(len(df['Score'])):
+                if df[val1][i] == 1 and df[val2][i] == 1:
                     mult_dat[i,0] = 1
                 else:
                     mult_dat[i,0] = 0
 
-                if player_in_path[2][i] == 1 and player_in_path[3][i] == 1:
+                if df[val3][i] == 1 and df[val4][i] == 1:
                     mult_dat[i,1] = 1
                 else:
                     mult_dat[i,1] = 0
@@ -71,12 +76,12 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
             title = ['Henry Bergkmap','Kolo Campbell']
             for i in range(2):
                 fig, ax = plt.subplots(1,3)
-                ax[0].scatter(path_length,poss_score,c=mult_dat[:,i])
+                ax[0].scatter(df['Path_length'],df['Score'],c=mult_dat[:,i])
                 ax[0].set_xlabel('Path Length') ; ax[0].set_ylabel('Score')
-                ax[1].scatter(num_players,poss_score,c=mult_dat[:,i])
+                ax[1].scatter(df['Num_players'],df['Score'],c=mult_dat[:,i])
                 ax[1].set_title(title[i])
                 ax[1].set_xlabel('Num Players') ; ax[1].set_ylabel('Score')
-                ax[2].scatter(num_players,path_length,c=mult_dat[:,i])
+                ax[2].scatter(df['Num_players'],df['Path_length'],c=mult_dat[:,i])
                 ax[2].set_xlabel('Num Players') ; ax[2].set_ylabel('Path Length')
                 plt.legend()
 
@@ -109,24 +114,24 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
         # score of each pathway if certain players are in or not      
         if 1==0:
 
-            for i in range(len(nam)):
-            #for i in range(2):
+            #for i in range(len(nam)):
+            for i in range(5):
 
                 # FOR SCATTER, alpha = 0.1 for easier visualization 
                 plot_data = [[],[],[]]
-                plot_data[0] = [path_length,poss_score,[x for x in player_in_path[i]]]
-                plot_data[1] = [num_players,poss_score,[x for x in player_in_path[i]]]
-                plot_data[2] = [num_players,path_length,[x for x in player_in_path[i]]]
 
-                title = [nam[i]]
+                plot_data[0] = [df['Path_length'],df['Score'],df[nam[i]]]
+                plot_data[1] = [df['Num_players'],df['Score'],df[nam[i]]]
+                plot_data[2] = [df['Num_players'],df['Path_length'],df[nam[i]]]
+
+                title = [nam[i]] 
                 xlabel = ['Path Length','Num Players','Num Players']
                 ylabel = ['Score','Score','Path Length']
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
         # score based on events in pathway
-        if 1==1:
+        if 1==0:
 
-            event_nam = ['Dribble','Shot','Dribbled Past','Carry']
             for i in range(len(event_nam)):
 
                 title = [event_nam[i]]
@@ -134,17 +139,17 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
                 xlabel = ['Path Length','Num Players','Num Players']
                 ylabel = ['Score','Score','Path Length']
 
-                plot_data[0] = [path_length,poss_score,[x for x in event_in_path[i]]]
-                plot_data[1] = [num_players,poss_score,[x for x in event_in_path[i]]]
-                plot_data[2] = [num_players,path_length,[x for x in event_in_path[i]]]
+                plot_data[0] = [df['Path_length'],df['Score'],df[event_nam[i]]]
+                plot_data[1] = [df['Num_players'],df['Score'],df[event_nam[i]]]
+                plot_data[2] = [df['Num_players'],df['Path_length'],df[event_nam[i]]]
+                
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
         # scored based on beginning position of pathway
-        if 1==0:
+        if 1==1:
             for i in range(1,5):
-                x = [j for j, e in enumerate(path_start_val) if e == i]
-                x2 = [path_start_val[i] for i in x]
-                x3 = [poss_score[i] for i in x]
+                x = [j for j, e in enumerate(df['Start_val']) if e == i]
+                x3 = [df['Score'][i] for i in x]
                 fig, ax = plt.subplots()
                 plt.hist(x3)
                 plt.title('Starting Pathway Value '+str(i))     
@@ -152,7 +157,7 @@ def ml_run(total_data_,val_data,percent_poss_score,list_data,nam):
 
         if 1==0:  # this is pretty boring atm
             fig, ax = plt.subplots()
-            im = plt.scatter(path_length,num_players,c=poss_score)
+            im = plt.scatter(df['Path_length'],df['Num_players'],c=df['Score'])
             fig.colorbar(im)
             plt.legend()
             plt.xlabel('Path length')

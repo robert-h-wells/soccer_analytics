@@ -105,30 +105,32 @@ def main():
   val_data = [values_length,values_num_players]
   list_data = [poss_list, player_list]
 
-  ml.ml_run(total_data_,val_data,percent_poss_score,list_data,nam)
-
-
   # Make pandas dataframe
   df_nam = (['Path_length','Num_players',*(str(i) for i in nam),'Dribble','Shot','Dribbled_past',
               'Carry','Start_val','Score'])
   df_pre = ([path_length,num_players,*(i for i in player_in_path),
             *(j for j in event_in_path),path_start_val,poss_score])
 
-
   df = pd.DataFrame(np.transpose(df_pre),columns=df_nam)
 
-  X = df[df_nam[:-1]]
-  target = df['Score']
+  # Run machine learning tools
+  ml.ml_run(df,val_data,percent_poss_score,list_data,nam)
 
-  from sklearn.ensemble import RandomForestClassifier
 
-  forest_clf = RandomForestClassifier()
-  forest_clf.fit(X, target)
+  if 1==0:
 
-  important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
-                      df_nam[:-1]), reverse=True)
-  for i in important_param:
-    print(i)
+    X = df[df_nam[:-1]]
+    target = df['Score']
+
+    from sklearn.ensemble import RandomForestClassifier
+
+    forest_clf = RandomForestClassifier()
+    forest_clf.fit(X, target)
+
+    important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
+                        df_nam[:-1]), reverse=True)
+    for i in important_param:
+      print(i)
 
   
 #=========================================================================================================================#
