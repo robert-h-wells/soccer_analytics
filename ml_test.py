@@ -10,7 +10,7 @@ import tools as tl
 import plots as pl
 
 #=============================================================================================================#
-def ml_run(df,val_data,percent_poss_score,list_data,nam):
+def ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam):
 
     # Unpack data from pass_paths
     values_length, values_num_players = val_data
@@ -20,13 +20,11 @@ def ml_run(df,val_data,percent_poss_score,list_data,nam):
     sort_num_players = sorted(set(df['Num_players']))
     sort_score = sorted(set(df['Score']))
 
-    event_nam = ['Dribble','Shot','Dribbled_past','Carry']
-
 
     # Make plots of the important attributes
     if 1==1:
 
-        if 1==0:  # Make 2 plots
+        if 1==1:  # Make 2 plots
 
             # score of each pathway vs. length of pathway 
             plot_data = [[],[],[]]
@@ -146,7 +144,7 @@ def ml_run(df,val_data,percent_poss_score,list_data,nam):
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
         # scored based on beginning position of pathway
-        if 1==1:
+        if 1==0:
             for i in range(1,5):
                 x = [j for j, e in enumerate(df['Start_val']) if e == i]
                 x3 = [df['Score'][i] for i in x]
@@ -166,7 +164,22 @@ def ml_run(df,val_data,percent_poss_score,list_data,nam):
     
     plt.show()
 #=============================================================================================================#
+def ml_models(df,df_nam,nam,event_nam):
 
+    X = df[df_nam[:-1]]
+    target = df['Score']
+
+    from sklearn.ensemble import RandomForestClassifier
+
+    forest_clf = RandomForestClassifier()
+    forest_clf.fit(X, target)
+
+    important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
+                        df_nam[:-1]), reverse=True)
+    
+    for i in important_param:
+      print(i)    
+      
 # NOW NEED TO WORK ON REGRESSION, CATEGORIES FOR EACH PATHWAY FROM BOOK EXAMPLES
 
 #=============================================================================================================#

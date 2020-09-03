@@ -59,6 +59,12 @@ def main():
 
   #==== sort data by length, number of players, etc. ====#
 
+  # list of player names
+  nam = [x[1] for x in player_list]
+
+  # list of important events
+  event_nam = ['Dribble','Shot','Dribbled_past','Carry']
+
   # find the length of each pathway
   path_length = np.zeros((len(poss_score)))
   for i in range(len(poss_score)):
@@ -69,17 +75,16 @@ def main():
   for i in range(len(poss_score)):
     num_players[i] = len(set([x[0] for x in poss_data[i]]))
 
-  ## score, length of path, number of players, is player present
-  total_data_ = ([path_length,num_players,([i for i in player_in_path]),
-                ([j for j in event_in_path]),path_start_val,poss_score])
-  total_data = np.transpose(total_data_)
-  
-  # list of player names
-  nam = [x[1] for x in player_list]
+    # Make pandas dataframe of parameters
+  df_nam = (['Path_length','Num_players',*(str(i) for i in nam),'Dribble','Shot','Dribbled_past',
+              'Carry','Start_val','Score'])
+  df_pre = ([path_length,num_players,*(i for i in player_in_path),
+            *(j for j in event_in_path),path_start_val,poss_score])
 
-  #================= Examine the data to find important attributes ==================#
+  df = pd.DataFrame(np.transpose(df_pre),columns=df_nam)
+
+  #================= Examine the data to find degeneracy of attributes ==================#
   
-  # determine the degeneracy of combinations of the 3 important attributes
   # length vs score, num players vs score, length and num players vs score
   dat = tl.get_path_info(path_length,num_players,poss_score)
   values_length, values_num_players, values_all, values_total = dat
@@ -105,33 +110,14 @@ def main():
   val_data = [values_length,values_num_players]
   list_data = [poss_list, player_list]
 
-  # Make pandas dataframe
-  df_nam = (['Path_length','Num_players',*(str(i) for i in nam),'Dribble','Shot','Dribbled_past',
-              'Carry','Start_val','Score'])
-  df_pre = ([path_length,num_players,*(i for i in player_in_path),
-            *(j for j in event_in_path),path_start_val,poss_score])
-
-  df = pd.DataFrame(np.transpose(df_pre),columns=df_nam)
 
   # Run machine learning tools
-  ml.ml_run(df,val_data,percent_poss_score,list_data,nam)
-
-
   if 1==0:
+    ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
 
-    X = df[df_nam[:-1]]
-    target = df['Score']
-
-    from sklearn.ensemble import RandomForestClassifier
-
-    forest_clf = RandomForestClassifier()
-    forest_clf.fit(X, target)
-
-    important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
-                        df_nam[:-1]), reverse=True)
-    for i in important_param:
-      print(i)
-
+  # Run ML modeling
+  if 1==1:
+    ml.ml_models(df,df_nam,nam,event_nam)
   
 #=========================================================================================================================#
 
