@@ -168,11 +168,17 @@ def ml_models(df,df_nam,nam,event_nam):
 
     X = df[df_nam[:-1]]
     target = df['Score']
+    print('target')
+    print(len(target))
+
+    target_10 = ([df['Score'] == 10.])
+
+    print(target_10)
 
     from sklearn.ensemble import RandomForestClassifier
 
     forest_clf = RandomForestClassifier()
-    forest_clf.fit(X, target)
+    forest_clf.fit(X, target_10[0])
 
     important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
                         df_nam[:-1]), reverse=True)
@@ -181,5 +187,6 @@ def ml_models(df,df_nam,nam,event_nam):
       print(i)    
       
 # NOW NEED TO WORK ON REGRESSION, CATEGORIES FOR EACH PATHWAY FROM BOOK EXAMPLES
+
 
 #=============================================================================================================#
