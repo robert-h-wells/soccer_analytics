@@ -172,6 +172,7 @@ def ml_models(df,df_nam,nam,event_nam):
     print(len(target))
 
     target_10 = ([df['Score'] == 10.])
+    # Need to improve this to shot being the highest variable
 
     print(target_10)
 
