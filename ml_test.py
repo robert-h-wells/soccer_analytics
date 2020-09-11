@@ -166,15 +166,22 @@ def ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam):
 #=============================================================================================================#
 def ml_models(df,df_nam,nam,event_nam):
 
-    X = df[df_nam[:-1]]
+    checks = [2,6,7,9,10,11,12,13,23,24]
+    check_nam = [df_nam[i] for i in checks]
+    print(check_nam)
+
+    for i in range(len(checks)):
+        x2 = check_nam[i]
+    #print([df[x2][df[x2] == 1 and df['Score'] == 10 ] ])
+        print(x2,len(list(df['Score'] [(df['Score'] == 10) & (df[x2] == 1) ])),
+            len(list(df['Score'] [(df['Score'] != 10) & (df[x2] == 1) ])) )
+
+    #X = df[df_nam[:-1]]
+    X = df[check_nam]
     target = df['Score']
-    print('target')
-    print(len(target))
 
-    target_10 = ([df['Score'] == 10.])
+    target_10 = ([df['Score'] == 10])
     # Need to improve this to shot being the highest variable
-
-    print(target_10)
 
     from sklearn.ensemble import RandomForestClassifier
 
@@ -182,7 +189,7 @@ def ml_models(df,df_nam,nam,event_nam):
     forest_clf.fit(X, target_10[0])
 
     important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
-                        df_nam[:-1]), reverse=True)
+                        check_nam), reverse=True)
     
     for i in important_param:
       print(i)    
