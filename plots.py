@@ -31,6 +31,59 @@ def get_pitch():
     plt.plot([124.5,124.5],[54,36],color="black")
     plt.plot([124.5,130],[36,36],color="black")
 #===============================================================================================#
+def get_start_map(data):
+
+    fig, ax = plt.subplots()
+    get_pitch()
+    plt.ylim(100, -10)
+
+    team = []
+    team_nam = []
+    print()
+    for i in data['tactics']['lineup']:
+        team.append([i['player']['id'],i['position']['id']])
+        team_nam.append([i['player']['name'],i['position']['name']])
+
+    print(team_nam)
+
+    # Position data for map
+    pos_dat = [ [0,0], # N/A - 0 
+        [5,45], # GK - 1
+        [22,80], # RB - 2
+        [22,60], # RCB - 3
+        [22,45], # CB - 4
+        [22,30], # LCB - 5
+        [22,10], # LB - 6
+        [44,80], # RWB - 7
+        [44,10], # LWB - 8
+        [44,60], # RDM - 9
+        [44,45], # CDM - 10
+        [44,30], # LDM - 11
+        [65,80], # RM - 12
+        [65,60], # RCM - 13
+        [65,45], # CM - 14
+        [65,30], # LCM - 15
+        [65,10], # LM - 16
+        [82,80], # RW - 17
+        [82,60], # RAM - 18
+        [82,45], # CAM - 19
+        [82,30], # LAM - 20
+        [82,10], # LW - 21
+        [110,60], # RCF - 22
+        [110,45], # ST - 23
+        [110,30], # LCF - 24
+        [97,45] # SS - 25
+    ]
+
+    for i in team:
+        print(i[0])
+        X1 = pos_dat[i[1]][0]
+        Y1 = pos_dat[i[1]][1]
+        ax.plot(X1,Y1,'o',markersize=20,color='red')
+
+    plt.show()
+
+#===============================================================================================#
 def plot_pass_path(data,start_val,end_val):
     # creates a movie of individual events during a possession sequence
 

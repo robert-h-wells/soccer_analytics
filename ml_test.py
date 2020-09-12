@@ -5,14 +5,14 @@ import matplotlib.animation
 from sklearn.pipeline import Pipeline
 from scipy.interpolate import griddata
 
-import pass_paths as mn
+import full_season as mn
 import tools as tl
 import plots as pl
 
 #=============================================================================================================#
 def ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam):
 
-    # Unpack data from pass_paths
+    # Unpack data from full_season
     values_length, values_num_players = val_data
     poss_list, player_list = list_data
 
