@@ -32,14 +32,16 @@ def get_pitch():
     plt.plot([124.5,130],[36,36],color="black")
 #===============================================================================================#
 def get_start_map(data):
+    "Make a starting X1 map with positions and initials"
 
     fig, ax = plt.subplots()
     get_pitch()
     plt.ylim(100, -10)
+    plt.title('Starting XI')
 
     team = []
     team_nam = []
-    print()
+
     for i in data['tactics']['lineup']:
         team.append([i['player']['id'],i['position']['id']])
         team_nam.append([i['player']['name'],i['position']['name']])
@@ -69,18 +71,81 @@ def get_start_map(data):
         [82,45], # CAM - 19
         [82,30], # LAM - 20
         [82,10], # LW - 21
-        [110,60], # RCF - 22
-        [110,45], # ST - 23
-        [110,30], # LCF - 24
-        [97,45] # SS - 25
+        [105,60], # RCF - 22
+        [105,45], # ST - 23
+        [105,30], # LCF - 24
+        [95,45] # SS - 25
     ]
 
-    for i in team:
-        print(i[0])
+    for i,j in zip(team,team_nam):
+
+        try:
+            nam_id = [list(j[0].split(' ')[0]),list(j[0].split(' ')[-1])]
+            nam_id = str(nam_id[0][0])+str(nam_id[1][0])
+        except:
+            nam_id = [list(j[0].split(' ')[0]),list(j[0].split(' ')[1])]
+            nam_id = str(nam_id[0][0])+str(nam_id[1][0])
+
         X1 = pos_dat[i[1]][0]
         Y1 = pos_dat[i[1]][1]
         ax.plot(X1,Y1,'o',markersize=20,color='red')
+        plt.text(X1-3.5,Y1+2,nam_id,fontsize=14)
 
+    plt.show()
+#===============================================================================================#
+def get_path_pos_plot(path_start_val):
+    " Contour plot for starting pathway positions (x and y) "
+
+    from scipy.interpolate import griddata
+
+    x_vals = [j[0] for j in path_start_val]
+    y_vals = [j[1] for j in path_start_val]
+
+    x_percent = []
+    y_percent = []
+
+    for j in range(1,5):
+        x_percent.append( len([i for i in x_vals if i == j])/len(x_vals) )
+        y_percent.append( len([i for i in y_vals if i == j])/len(y_vals) )
+
+    fig, ax = plt.subplots()
+    get_pitch()
+    plt.ylim(100, -10)
+    plt.title('Beginning Positions')
+
+    xi = [0.0,25.0,35.0,55.0,65.0,85.0,95.0,115.0,125.0,130.0]
+    yi = [0.0,5.0,15.0,25.0,35.0,45.0,55.0,65.0,75.0,85.0,90.0]
+    X, Y = np.meshgrid(xi,yi)
+    Z = np.zeros((np.shape(X)))
+    Z[:,:2] = x_percent[0]
+    Z[:,2:5] = x_percent[1]
+    Z[:,5:7] = x_percent[2]
+    Z[:,7:] = x_percent[3]
+
+    #im = plt.contour(X,Y,Z,2,linewidths=0.5,colors='k')
+    im = plt.contourf(X,Y,Z,4,cmap='RdGy')
+    fig.colorbar(im)
+    #plt.show()
+
+
+    fig, ax = plt.subplots()
+    get_pitch()
+    plt.ylim(100, -10)
+    plt.title('Beginning Positions')
+
+    xi = [0.0,25.0,35.0,55.0,65.0,85.0,95.0,115.0,125.0,130.0]
+    yi = [0.0,5.0,15.0,25.0,35.0,45.0,55.0,65.0,75.0,85.0,90.0]
+    X, Y = np.meshgrid(xi,yi)
+    Z = np.zeros((np.shape(X)))
+    Z[:3,:] = y_percent[0]
+    Z[3:5,:] = y_percent[1]
+    Z[5:7,:] = y_percent[2]
+    Z[8:,:] = y_percent[3]
+
+
+    #im = plt.contour(X,Y,Z,2,linewidths=0.5,colors='k')
+    im = plt.contourf(X,Y,Z,3,cmap='RdGy')
+    fig.colorbar(im)
     plt.show()
 
 #===============================================================================================#

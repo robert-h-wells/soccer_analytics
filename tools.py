@@ -76,17 +76,33 @@ def get_path_pos(data,poss_list):
     for i in range(len(poss_list)):
         path_start_pos.append(data[poss_list[i][0]]['location'])
         
+        # Starting X position
         if path_start_pos[i][0] <= 30:
-            path_start_val.append(1)
+            val_x = 1
         elif path_start_pos[i][0] <= 60:
-            path_start_val.append(2)
+            val_x = 2
         elif path_start_pos[i][0] <= 90:
-            path_start_val.append(3)
+            val_x = 3
         elif path_start_pos[i][0] <= 120:
-            path_start_val.append(4)
+            val_x = 4
         else:
-            print('problem')
+            print('problem_x')
             print(path_start_pos[i])
+
+        # Starting Y position
+        if path_start_pos[i][1] <= 20:
+            val_y = 1
+        elif path_start_pos[i][1] <= 40:
+            val_y = 2
+        elif path_start_pos[i][1] <= 60:
+            val_y = 3
+        elif path_start_pos[i][1] <= 80:
+            val_y = 4
+        else:
+            print('problem_y')
+            print(path_start_pos[i])
+
+        path_start_val.append([val_x,val_y])
 
     return(path_start_pos,path_start_val)
 #===============================================================================================#
