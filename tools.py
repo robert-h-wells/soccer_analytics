@@ -2,6 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+
+import plots as pl
 #===============================================================================================#
 def get_poss_player_list(data):
     # from data, determine start and end data points for each possession pathway 
@@ -401,6 +403,16 @@ def get_percent_poss_score(values_all,values_total):
             percent_poss_score.append([values_all[i][0],values_all[i][1],values_all[i][2],percent])
 
     return(percent_poss_score)    
+#===============================================================================================#
+def get_pass_data(player_list,df):
+
+    pass_data = []
+    for i in player_list:
+        pass_data.append(df[(df['player_name'] == i[1]) & (df['type_name'] == 'Pass')])
+
+    print(list(pass_data[0].columns))
+
+    return(pass_data)
 #===============================================================================================#
 def copy_files_tools(match_data):
     """ Copy files from source ot game_data folder """

@@ -2,40 +2,72 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import seaborn as sns
 #===============================================================================================#
-def get_pitch():
+def draw_pitch(ax):
+    # size of the pitch is 120, 80
+    #Create figure
+
+    from matplotlib.patches import Arc, Rectangle, ConnectionPatch
+
     #Pitch Outline & Centre Line
-    plt.plot([0,0],[0,90], color="black")
-    plt.plot([0,130],[90,90], color="black")
-    plt.plot([130,130],[90,0], color="black")
-    plt.plot([130,0],[0,0], color="black")
-    plt.plot([65,65],[0,90], color="black")
+    plt.plot([0,0],[0,80], color="black")
+    plt.plot([0,120],[80,80], color="black")
+    plt.plot([120,120],[80,0], color="black")
+    plt.plot([120,0],[0,0], color="black")
+    plt.plot([60,60],[0,80], color="black")
 
     #Left Penalty Area
-    plt.plot([16.5,16.5],[65,25],color="black")
-    plt.plot([0,16.5],[65,65],color="black")
-    plt.plot([16.5,0],[25,25],color="black")
+    plt.plot([14.6,14.6],[57.8,22.2],color="black")
+    plt.plot([0,14.6],[57.8,57.8],color="black")
+    plt.plot([0,14.6],[22.2,22.2],color="black")
 
     #Right Penalty Area
-    plt.plot([130,113.5],[65,65],color="black")
-    plt.plot([113.5,113.5],[65,25],color="black")
-    plt.plot([113.5,130],[25,25],color="black")
+    plt.plot([120,105.4],[57.8,57.8],color="black")
+    plt.plot([105.4,105.4],[57.8,22.5],color="black")
+    plt.plot([120, 105.4],[22.5,22.5],color="black")
 
     #Left 6-yard Box
-    plt.plot([0,5.5],[54,54],color="black")
-    plt.plot([5.5,5.5],[54,36],color="black")
-    plt.plot([5.5,0.5],[36,36],color="black")
+    plt.plot([0,4.9],[48,48],color="black")
+    plt.plot([4.9,4.9],[48,32],color="black")
+    plt.plot([0,4.9],[32,32],color="black")
 
     #Right 6-yard Box
-    plt.plot([130,124.5],[54,54],color="black")
-    plt.plot([124.5,124.5],[54,36],color="black")
-    plt.plot([124.5,130],[36,36],color="black")
+    plt.plot([120,115.1],[48,48],color="black")
+    plt.plot([115.1,115.1],[48,32],color="black")
+    plt.plot([120,115.1],[32,32],color="black")
+
+    #Prepare Circles
+    centreCircle = plt.Circle((60,40),8.1,color="black",fill=False)
+    centreSpot = plt.Circle((60,40),0.71,color="black")
+    leftPenSpot = plt.Circle((9.7,40),0.71,color="black")
+    rightPenSpot = plt.Circle((110.3,40),0.71,color="black")
+
+    #Draw Circles
+    ax.add_patch(centreCircle)
+    ax.add_patch(centreSpot)
+    ax.add_patch(leftPenSpot)
+    ax.add_patch(rightPenSpot)
+
+    #Prepare Arcs
+    # arguments for arc
+    # x, y coordinate of centerpoint of arc
+    # width, height as arc might not be circle, but oval
+    # angle: degree of rotation of the shape, anti-clockwise
+    # theta1, theta2, start and end location of arc in degree
+    leftArc = Arc((9.7,40),height=16.2,width=16.2,angle=0,theta1=310,theta2=50,color="black")
+    rightArc = Arc((110.3,40),height=16.2,width=16.2,angle=0,theta1=130,theta2=230,color="black")
+
+    #Draw Arcs
+    ax.add_patch(leftArc)
+    ax.add_patch(rightArc)
+
 #===============================================================================================#
 def get_start_map(data):
     "Make a starting X1 map with positions and initials"
 
     fig, ax = plt.subplots()
-    get_pitch()
+    draw_pitch(ax)
     plt.ylim(100, -10)
     plt.title('Starting XI')
 
@@ -50,31 +82,31 @@ def get_start_map(data):
 
     # Position data for map
     pos_dat = [ [0,0], # N/A - 0 
-        [5,45], # GK - 1
-        [22,80], # RB - 2
-        [22,60], # RCB - 3
-        [22,45], # CB - 4
-        [22,30], # LCB - 5
+        [5,40], # GK - 1
+        [22,70], # RB - 2
+        [22,55], # RCB - 3
+        [22,40], # CB - 4
+        [22,25], # LCB - 5
         [22,10], # LB - 6
-        [44,80], # RWB - 7
-        [44,10], # LWB - 8
-        [44,60], # RDM - 9
-        [44,45], # CDM - 10
-        [44,30], # LDM - 11
-        [65,80], # RM - 12
-        [65,60], # RCM - 13
-        [65,45], # CM - 14
-        [65,30], # LCM - 15
-        [65,10], # LM - 16
-        [82,80], # RW - 17
-        [82,60], # RAM - 18
-        [82,45], # CAM - 19
-        [82,30], # LAM - 20
-        [82,10], # LW - 21
-        [105,60], # RCF - 22
-        [105,45], # ST - 23
-        [105,30], # LCF - 24
-        [95,45] # SS - 25
+        [40,70], # RWB - 7
+        [40,10], # LWB - 8
+        [40,55], # RDM - 9
+        [40,40], # CDM - 10
+        [40,25], # LDM - 11
+        [60,70], # RM - 12
+        [60,55], # RCM - 13
+        [60,40], # CM - 14
+        [60,25], # LCM - 15
+        [60,10], # LM - 16
+        [80,70], # RW - 17
+        [80,55], # RAM - 18
+        [80,40], # CAM - 19
+        [80,25], # LAM - 20
+        [80,10], # LW - 21
+        [105,55], # RCF - 22
+        [105,40], # ST - 23
+        [105,25], # LCF - 24
+        [95,40] # SS - 25
     ]
 
     for i,j in zip(team,team_nam):
@@ -90,6 +122,7 @@ def get_start_map(data):
         Y1 = pos_dat[i[1]][1]
         ax.plot(X1,Y1,'o',markersize=20,color='red')
         plt.text(X1-3.5,Y1+2,nam_id,fontsize=14)
+
 
     plt.show()
 #===============================================================================================#
@@ -109,7 +142,7 @@ def get_path_pos_plot(path_start_val):
         y_percent.append( len([i for i in y_vals if i == j])/len(y_vals) )
 
     fig, ax = plt.subplots()
-    get_pitch()
+    draw_pitch(ax)
     plt.ylim(100, -10)
     plt.title('Beginning Positions')
 
@@ -129,7 +162,7 @@ def get_path_pos_plot(path_start_val):
 
 
     fig, ax = plt.subplots()
-    get_pitch()
+    draw_pitch(ax)
     plt.ylim(100, -10)
     plt.title('Beginning Positions')
 
@@ -147,6 +180,37 @@ def get_path_pos_plot(path_start_val):
     im = plt.contourf(X,Y,Z,3,cmap='RdGy')
     fig.colorbar(im)
     plt.show()
+#===============================================================================================#
+def indiv_pass_map(pass_data,player_list):
+
+    for ii in range(len(pass_data)):
+        fig, ax = plt.subplots()
+        draw_pitch(ax)
+        plt.ylim(100, -10)
+        for i in range(len(pass_data[ii])):
+            # annotate draw an arrow from a current position to pass_end_location
+            arrow_style = '->' ; arrow_color = 'blue'
+
+            if pass_data[ii].iloc[i]['pass_outcome_id'] == 9:
+                arrow_style = "-|>" ; arrow_color = 'red'
+
+            ax.annotate("", xy = (pass_data[ii].iloc[i]['pass_end_location'][0], 
+                    pass_data[ii].iloc[i]['pass_end_location'][1]), xycoords = 'data',
+                    xytext = (pass_data[ii].iloc[i]['location'][0], pass_data[ii].iloc[i]['location'][1]), 
+                    textcoords = 'data',arrowprops=dict(arrowstyle=arrow_style,connectionstyle="arc3", color = arrow_color),)
+
+        x_coord = [i[0] for i in pass_data[ii]["location"]]
+        y_coord = [i[1] for i in pass_data[ii]["location"]]
+
+        #shades: give us the heat map we desire
+        # n_levels: draw more lines, the larger n, the more blurry it looks
+        sns.kdeplot(x_coord, y_coord, shade = "True", color = "green", n_levels = 30)
+
+        plt.title(player_list[ii][1])
+        plt.ylim(0, 80)
+        plt.xlim(0, 120)
+    plt.show()
+
 
 #===============================================================================================#
 def plot_pass_path(data,start_val,end_val):
