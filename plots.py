@@ -73,6 +73,7 @@ def get_start_map(data):
 
     team = []
     team_nam = []
+    initials = []
 
     for i in data['tactics']['lineup']:
         team.append([i['player']['id'],i['position']['id']])
@@ -122,9 +123,9 @@ def get_start_map(data):
         Y1 = pos_dat[i[1]][1]
         ax.plot(X1,Y1,'o',markersize=20,color='red')
         plt.text(X1-3.5,Y1+2,nam_id,fontsize=14)
+        initials.append(nam_id)
 
-
-    plt.show()
+    return(initials)
 #===============================================================================================#
 def get_path_pos_plot(path_start_val):
     " Contour plot for starting pathway positions (x and y) "
@@ -222,6 +223,9 @@ def indiv_pass_map(pass_data,player_list,type_val):
     plt.show()
 #===============================================================================================#
 def plot_centroids(centroids, weights=None, circle_color='w', cross_color='k'):
+    "Plot centroids for K-means algorithm"
+
+
     if weights is not None:
         centroids = centroids[weights > weights.max() / 10]
     plt.scatter(centroids[:, 0], centroids[:, 1],
@@ -230,23 +234,65 @@ def plot_centroids(centroids, weights=None, circle_color='w', cross_color='k'):
     plt.scatter(centroids[:, 0], centroids[:, 1],
                 marker='x', s=30, linewidths=16,
                 color=cross_color, zorder=11, alpha=1)
+#===============================================================================================#
+def heat_map(df,player_list,initials,type_val):
+    "Heat map of all player touches. Type_val = 1 shows all individual heat maps."
 
+    player_pos = []
+    #for ii in range(len(pass_data)):
+    for ii in range(11):
 
-def pass_network(pass_data,player_list):
+        df_player = df[df["player_name"] == player_list[ii][1]]
+        df_player = df_player.dropna(subset=["location"])
+
+        # Locations of all events from player
+        x_coord = [i[0] for i in df_player["location"]]
+        y_coord = [i[1] for i in df_player["location"]]
+
+        # Find average of all events
+        player_pos.append([np.mean(x_coord),np.mean(y_coord)])
+
+        if type_val == 1:
+            fig, ax = plt.subplots()
+            draw_pitch(ax)
+            plt.ylim(100, -10)
+
+            sns.kdeplot(x_coord, y_coord, shade = "True", color = "blue", n_levels = 30)
+            plt.plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+            
+            plt.title(player_list[ii][1])
+            plt.ylim(0, 80)
+            plt.xlim(0, 120)
+
+    # Map of all players average positions
+    fig, ax = plt.subplots()
+    draw_pitch(ax)
+    plt.ylim(100, -10)
+    plt.title('Starting XI Heat Map')
+
+    for ii in range(10):
+        X1 = player_pos[ii][0]
+        Y1 = player_pos[ii][1]
+        plt.plot(X1,Y1,'o',color='red',markersize=20)
+        plt.text(X1-3.5,Y1+2,initials[ii],fontsize=14)
+
+    return(player_pos)
+#===============================================================================================#
+def pass_network(pass_data,player_list,player_pos):
     """
     More complex version of indiv_pass_map. Will include clustering to find multiple average
     positions of areas where passes began.
     """
 
-    for ii in range(len(pass_data)):
-    #for ii in range(8,9):
+    #for ii in range(len(pass_data)):
+    for ii in range(10):
         fig, ax = plt.subplots()
         draw_pitch(ax)
         plt.ylim(100, -10)
 
-        for i in range(len(pass_data[ii])):
-            plt.plot(pass_data[ii].iloc[i]['location'][0], pass_data[ii].iloc[i]['location'][1],
-                'o',color='blue')
+        #for i in range(len(pass_data[ii])):
+        #    plt.plot(pass_data[ii].iloc[i]['location'][0], pass_data[ii].iloc[i]['location'][1],
+        #        'o',color='blue')
 
         x_coord = [i[0] for i in pass_data[ii]["location"]]
         y_coord = [i[1] for i in pass_data[ii]["location"]]
@@ -266,19 +312,15 @@ def pass_network(pass_data,player_list):
                 chosen = j
 
         kmeans = KMeans(n_clusters=chosen, random_state=42).fit(X)
-        plot_centroids(kmeans.cluster_centers_)
+        #plot_centroids(kmeans.cluster_centers_)
 
         # Heat Map of Passing
         sns.kdeplot(x_coord, y_coord, shade = "True", color = "green", n_levels = 30)
-
-        # Would like to generate an overall heat map for each player, not just for passing!!
-        ~~
 
         plt.title(player_list[ii][1])
         plt.ylim(0, 80)
         plt.xlim(0, 120)
 
-    plt.show()
 
 #===============================================================================================#
 def plot_pass_path(data,start_val,end_val):

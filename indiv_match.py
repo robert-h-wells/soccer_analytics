@@ -51,15 +51,19 @@ def main():
 
     # map with starting XI positions and initials
     # make sure the Arsenal team is chosen !!!
-    #pl.get_start_map(chosen_data[1])
+    player_initials = pl.get_start_map(chosen_data[1])
 
     # list of each player and event in each possession pathway
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
 
+    # heat map of all touches
+    player_pos = pl.heat_map(df_event,player_list,player_initials,0)
+
     # pass lists and map
     pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
     #pl.indiv_pass_map(pass_data,player_list,0)
-    pl.pass_network(pass_data,player_list)
+    pl.pass_network(pass_data,player_list,player_pos)
+    plt.show()
 
     sys.exit()
 
