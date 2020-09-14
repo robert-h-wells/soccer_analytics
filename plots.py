@@ -221,14 +221,25 @@ def indiv_pass_map(pass_data,player_list,type_val):
 
     plt.show()
 #===============================================================================================#
+def plot_centroids(centroids, weights=None, circle_color='w', cross_color='k'):
+    if weights is not None:
+        centroids = centroids[weights > weights.max() / 10]
+    plt.scatter(centroids[:, 0], centroids[:, 1],
+                marker='o', s=20, linewidths=8,
+                color=circle_color, zorder=10, alpha=0.9)
+    plt.scatter(centroids[:, 0], centroids[:, 1],
+                marker='x', s=30, linewidths=16,
+                color=cross_color, zorder=11, alpha=1)
+
+
 def pass_network(pass_data,player_list):
     """
     More complex version of indiv_pass_map. Will include clustering to find multiple average
     positions of areas where passes began.
     """
 
-    #for ii in range(len(pass_data)):
-    for ii in range(1,2):
+    for ii in range(len(pass_data)):
+    #for ii in range(8,9):
         fig, ax = plt.subplots()
         draw_pitch(ax)
         plt.ylim(100, -10)
@@ -241,6 +252,27 @@ def pass_network(pass_data,player_list):
         y_coord = [i[1] for i in pass_data[ii]["location"]]
 
         plt.plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+
+        # K-means
+        X = list(zip(x_coord,y_coord))
+        from sklearn.cluster import KMeans
+        from sklearn.metrics import silhouette_score
+
+        chosen = 0 ; chosen_score = 0.0
+        for j in range(2,6):
+            kmeans = KMeans(n_clusters=j, random_state=42).fit(X)
+            if silhouette_score(X, kmeans.labels_) > chosen_score:
+                chosen_score = silhouette_score(X, kmeans.labels_)
+                chosen = j
+
+        kmeans = KMeans(n_clusters=chosen, random_state=42).fit(X)
+        plot_centroids(kmeans.cluster_centers_)
+
+        # Heat Map of Passing
+        sns.kdeplot(x_coord, y_coord, shade = "True", color = "green", n_levels = 30)
+
+        # Would like to generate an overall heat map for each player, not just for passing!!
+        ~~
 
         plt.title(player_list[ii][1])
         plt.ylim(0, 80)
