@@ -181,23 +181,32 @@ def get_path_pos_plot(path_start_val):
     fig.colorbar(im)
     plt.show()
 #===============================================================================================#
-def indiv_pass_map(pass_data,player_list):
+def indiv_pass_map(pass_data,player_list,type_val):
+    """
+    Pass heat maps with passing arrows if type_val = 1
+    Plot showing arrows from starting locations of each pass (completed and non-completed)
+    """
 
-    for ii in range(len(pass_data)):
+    #for ii in range(len(pass_data)):
+    for ii in range(1,2):
         fig, ax = plt.subplots()
         draw_pitch(ax)
         plt.ylim(100, -10)
-        for i in range(len(pass_data[ii])):
-            # annotate draw an arrow from a current position to pass_end_location
-            arrow_style = '->' ; arrow_color = 'blue'
 
-            if pass_data[ii].iloc[i]['pass_outcome_id'] == 9:
-                arrow_style = "-|>" ; arrow_color = 'red'
+        if type_val == 1:
+            for i in range(len(pass_data[ii])):
+                # annotate draw an arrow from a current position to pass_end_location
+                arrow_style = '->' ; arrow_color = 'blue'
 
-            ax.annotate("", xy = (pass_data[ii].iloc[i]['pass_end_location'][0], 
-                    pass_data[ii].iloc[i]['pass_end_location'][1]), xycoords = 'data',
-                    xytext = (pass_data[ii].iloc[i]['location'][0], pass_data[ii].iloc[i]['location'][1]), 
-                    textcoords = 'data',arrowprops=dict(arrowstyle=arrow_style,connectionstyle="arc3", color = arrow_color),)
+                if pass_data[ii].iloc[i]['pass_outcome_id'] == 9:
+                    arrow_style = "-|>" ; arrow_color = 'red'
+
+                ax.annotate("", xy = (pass_data[ii].iloc[i]['pass_end_location'][0], 
+                        pass_data[ii].iloc[i]['pass_end_location'][1]), xycoords = 'data',
+                        xytext = (pass_data[ii].iloc[i]['location'][0], 
+                        pass_data[ii].iloc[i]['location'][1]), textcoords = 'data',
+                        arrowprops=dict(arrowstyle=arrow_style,
+                        connectionstyle="arc3", color = arrow_color),)      
 
         x_coord = [i[0] for i in pass_data[ii]["location"]]
         y_coord = [i[1] for i in pass_data[ii]["location"]]
@@ -209,8 +218,35 @@ def indiv_pass_map(pass_data,player_list):
         plt.title(player_list[ii][1])
         plt.ylim(0, 80)
         plt.xlim(0, 120)
-    plt.show()
 
+    plt.show()
+#===============================================================================================#
+def pass_network(pass_data,player_list):
+    """
+    More complex version of indiv_pass_map. Will include clustering to find multiple average
+    positions of areas where passes began.
+    """
+
+    #for ii in range(len(pass_data)):
+    for ii in range(1,2):
+        fig, ax = plt.subplots()
+        draw_pitch(ax)
+        plt.ylim(100, -10)
+
+        for i in range(len(pass_data[ii])):
+            plt.plot(pass_data[ii].iloc[i]['location'][0], pass_data[ii].iloc[i]['location'][1],
+                'o',color='blue')
+
+        x_coord = [i[0] for i in pass_data[ii]["location"]]
+        y_coord = [i[1] for i in pass_data[ii]["location"]]
+
+        plt.plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+
+        plt.title(player_list[ii][1])
+        plt.ylim(0, 80)
+        plt.xlim(0, 120)
+
+    plt.show()
 
 #===============================================================================================#
 def plot_pass_path(data,start_val,end_val):

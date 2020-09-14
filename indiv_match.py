@@ -58,8 +58,8 @@ def main():
 
     # pass lists and map
     pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
-    #pl.indiv_pass_map(pass_data,player_list)
-    pl.pass_network()
+    pl.indiv_pass_map(pass_data,player_list,0)
+    #pl.pass_network(pass_data,player_list)
 
     sys.exit()
 
