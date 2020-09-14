@@ -410,9 +410,14 @@ def get_pass_data(player_list,df):
     for i in player_list:
         pass_data.append(df[(df['player_name'] == i[1]) & (df['type_name'] == 'Pass')])
 
-    print(list(pass_data[0].columns))
+    pass_data_recip = []
+    for i in range(len(pass_data)):
+        lister = list(pass_data[i]['pass_recipient_name'])
+        val = [lister.count(j) for j in list(set(lister))]
+        zip_val = [j for j in zip(val,list(set(lister)))]
+        pass_data_recip.append(zip_val)
 
-    return(pass_data)
+    return(pass_data,pass_data_recip)
 #===============================================================================================#
 def copy_files_tools(match_data):
     """ Copy files from source ot game_data folder """

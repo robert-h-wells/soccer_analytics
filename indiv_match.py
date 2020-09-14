@@ -57,8 +57,9 @@ def main():
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
 
     # pass lists and map
-    pass_data = tl.get_pass_data(player_list,df_event)
-    pl.indiv_pass_map(pass_data,player_list)
+    pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
+    #pl.indiv_pass_map(pass_data,player_list)
+    pl.pass_network()
 
     sys.exit()
 
