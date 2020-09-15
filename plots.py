@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import seaborn as sns
+
+import tools as tl
+import ml_tools as ml
 #===============================================================================================#
 def draw_pitch(ax):
     # size of the pitch is 120, 80
@@ -11,31 +14,31 @@ def draw_pitch(ax):
     from matplotlib.patches import Arc, Rectangle, ConnectionPatch
 
     #Pitch Outline & Centre Line
-    plt.plot([0,0],[0,80], color="black")
-    plt.plot([0,120],[80,80], color="black")
-    plt.plot([120,120],[80,0], color="black")
-    plt.plot([120,0],[0,0], color="black")
-    plt.plot([60,60],[0,80], color="black")
+    ax.plot([0,0],[0,80], color="black")
+    ax.plot([0,120],[80,80], color="black")
+    ax.plot([120,120],[80,0], color="black")
+    ax.plot([120,0],[0,0], color="black")
+    ax.plot([60,60],[0,80], color="black")
 
     #Left Penalty Area
-    plt.plot([14.6,14.6],[57.8,22.2],color="black")
-    plt.plot([0,14.6],[57.8,57.8],color="black")
-    plt.plot([0,14.6],[22.2,22.2],color="black")
+    ax.plot([14.6,14.6],[57.8,22.2],color="black")
+    ax.plot([0,14.6],[57.8,57.8],color="black")
+    ax.plot([0,14.6],[22.2,22.2],color="black")
 
     #Right Penalty Area
-    plt.plot([120,105.4],[57.8,57.8],color="black")
-    plt.plot([105.4,105.4],[57.8,22.5],color="black")
-    plt.plot([120, 105.4],[22.5,22.5],color="black")
+    ax.plot([120,105.4],[57.8,57.8],color="black")
+    ax.plot([105.4,105.4],[57.8,22.5],color="black")
+    ax.plot([120, 105.4],[22.5,22.5],color="black")
 
     #Left 6-yard Box
-    plt.plot([0,4.9],[48,48],color="black")
-    plt.plot([4.9,4.9],[48,32],color="black")
-    plt.plot([0,4.9],[32,32],color="black")
+    ax.plot([0,4.9],[48,48],color="black")
+    ax.plot([4.9,4.9],[48,32],color="black")
+    ax.plot([0,4.9],[32,32],color="black")
 
     #Right 6-yard Box
-    plt.plot([120,115.1],[48,48],color="black")
-    plt.plot([115.1,115.1],[48,32],color="black")
-    plt.plot([120,115.1],[32,32],color="black")
+    ax.plot([120,115.1],[48,48],color="black")
+    ax.plot([115.1,115.1],[48,32],color="black")
+    ax.plot([120,115.1],[32,32],color="black")
 
     #Prepare Circles
     centreCircle = plt.Circle((60,40),8.1,color="black",fill=False)
@@ -124,6 +127,9 @@ def get_start_map(data):
         ax.plot(X1,Y1,'o',markersize=20,color='red')
         plt.text(X1-3.5,Y1+2,nam_id,fontsize=14)
         initials.append(nam_id)
+
+    plt.ylim(80, 0)
+    plt.xlim(0, 120)
 
     return(initials)
 #===============================================================================================#
@@ -222,25 +228,37 @@ def indiv_pass_map(pass_data,player_list,type_val):
 
     plt.show()
 #===============================================================================================#
-def plot_centroids(centroids, weights=None, circle_color='w', cross_color='k'):
+def plot_centroids(centroids, ax, weights=None):
     "Plot centroids for K-means algorithm"
-
 
     if weights is not None:
         centroids = centroids[weights > weights.max() / 10]
-    plt.scatter(centroids[:, 0], centroids[:, 1],
-                marker='o', s=20, linewidths=8,
-                color=circle_color, zorder=10, alpha=0.9)
-    plt.scatter(centroids[:, 0], centroids[:, 1],
-                marker='x', s=30, linewidths=16,
-                color=cross_color, zorder=11, alpha=1)
+
+    ax.scatter(centroids[:, 0], centroids[:, 1],
+                marker='d',s=24,linewidths=2,color='darkorange')
+
+                #marker='d', s=16, linewidths=12,
+                #color=cross_color, zorder=11, alpha=1)
 #===============================================================================================#
-def heat_map(df,player_list,initials,type_val):
-    "Heat map of all player touches. Type_val = 1 shows all individual heat maps."
+def heat_map(df,player_list,initials):
+    "Heat map of all player touches."
 
     player_pos = []
-    #for ii in range(len(pass_data)):
-    for ii in range(11):
+    num = 12
+    fig, ax = plt.subplots(int(num/3),3)
+    fig.set_size_inches(18.0, 10.0)
+
+    for ii in range(num): # 11
+        if ii >= int(num*2/3):
+            val1 = ii - int(2*num/3)
+            val2 = 2
+        elif ii >= int(num/3):
+            val1 = ii - int(num/3)
+            val2 = 1
+        else:
+            val1 = ii
+            val2 = 0
+
 
         df_player = df[df["player_name"] == player_list[ii][1]]
         df_player = df_player.dropna(subset=["location"])
@@ -252,35 +270,26 @@ def heat_map(df,player_list,initials,type_val):
         # Find average of all events
         player_pos.append([np.mean(x_coord),np.mean(y_coord)])
 
-        if type_val == 1:
-            fig, ax = plt.subplots()
-            draw_pitch(ax)
-            plt.ylim(100, -10)
+        draw_pitch(ax[val1,val2])
+        plt.ylim(100, -10)
 
-            sns.kdeplot(x_coord, y_coord, shade = "True", color = "blue", n_levels = 30)
-            plt.plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+        # Heat map
+        sns.kdeplot(x_coord,y_coord,shade = "True",color = "blue",n_levels = 30,ax= ax[val1,val2])
 
-            # Should set up a function for this!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            # K-means
-            X = list(zip(x_coord,y_coord))
-            from sklearn.cluster import KMeans
-            from sklearn.metrics import silhouette_score
+        # Average position
+        ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
 
-            chosen = 0 ; chosen_score = 0.0
-            for j in range(2,6):
-                kmeans = KMeans(n_clusters=j, random_state=42).fit(X)
-                if silhouette_score(X, kmeans.labels_) > chosen_score:
-                    chosen_score = silhouette_score(X, kmeans.labels_)
-                    chosen = j
-
-            kmeans = KMeans(n_clusters=chosen, random_state=42).fit(X)
-            plot_centroids(kmeans.cluster_centers_)
+        # K-means to find clusters
+        X = list(zip(x_coord,y_coord))
+        kmeans = ml.find_cluster(X,[2,6])
+        plot_centroids(kmeans.cluster_centers_,ax[val1,val2])
+        
+        ax[val1,val2].set_title(player_list[ii][1])
+        ax[val1,val2].set_ylim(80, 0)
+        ax[val1,val2].set_xlim(0, 120)
             
-            plt.title(player_list[ii][1])
-            plt.ylim(80, 0)
-            plt.xlim(0, 120)
-
-    # Should also think about K-Means for multiple positions !!!!
+    plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
+    fig.delaxes(ax[3][2])
 
     # Map of all players average positions
     fig, ax = plt.subplots()
@@ -288,7 +297,7 @@ def heat_map(df,player_list,initials,type_val):
     plt.ylim(100, -10)
     plt.title('Starting XI Heat Map')
 
-    for ii in range(11):
+    for ii in range(11): # 11
         X1 = player_pos[ii][0]
         Y1 = player_pos[ii][1]
         plt.plot(X1,Y1,'o',color='red',markersize=20)
@@ -305,10 +314,22 @@ def pass_network(pass_data,player_list,player_pos):
     positions of areas where passes began.
     """
 
-    #for ii in range(len(pass_data)):
-    for ii in range(10):
-        fig, ax = plt.subplots()
-        draw_pitch(ax)
+    num = 12
+    fig, ax = plt.subplots(int(num/3),3)
+    fig.set_size_inches(18.0, 10.0)
+
+    for ii in range(num):
+        if ii >= int(num*2/3):
+            val1 = ii - int(2*num/3)
+            val2 = 2
+        elif ii >= int(num/3):
+            val1 = ii - int(num/3)
+            val2 = 1
+        else:
+            val1 = ii
+            val2 = 0
+
+        draw_pitch(ax[val1,val2])
         plt.ylim(100, -10)
 
         #for i in range(len(pass_data[ii])):
@@ -318,29 +339,23 @@ def pass_network(pass_data,player_list,player_pos):
         x_coord = [i[0] for i in pass_data[ii]["location"]]
         y_coord = [i[1] for i in pass_data[ii]["location"]]
 
-        plt.plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
-
-        # K-means
-        X = list(zip(x_coord,y_coord))
-        from sklearn.cluster import KMeans
-        from sklearn.metrics import silhouette_score
-
-        chosen = 0 ; chosen_score = 0.0
-        for j in range(2,6):
-            kmeans = KMeans(n_clusters=j, random_state=42).fit(X)
-            if silhouette_score(X, kmeans.labels_) > chosen_score:
-                chosen_score = silhouette_score(X, kmeans.labels_)
-                chosen = j
-
-        kmeans = KMeans(n_clusters=chosen, random_state=42).fit(X)
-        #plot_centroids(kmeans.cluster_centers_)
-
         # Heat Map of Passing
-        sns.kdeplot(x_coord, y_coord, shade = "True", color = "green", n_levels = 30)
+        sns.kdeplot(x_coord,y_coord,shade = "True",color = "green",n_levels = 30,ax= ax[val1,val2])
 
-        plt.title(player_list[ii][1])
-        plt.ylim(80, 0)
-        plt.xlim(0, 120)
+        # Average position
+        ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+
+        # K-means to get clusters
+        X = list(zip(x_coord,y_coord))
+        kmeans = ml.find_cluster(X,[2,6])
+        plot_centroids(kmeans.cluster_centers_,ax[val1,val2])
+
+        ax[val1,val2].set_title(player_list[ii][1])
+        ax[val1,val2].set_ylim(80, 0)
+        ax[val1,val2].set_xlim(0, 120)
+
+    plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
+    fig.delaxes(ax[3][2])
 
 
 #===============================================================================================#

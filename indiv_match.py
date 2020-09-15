@@ -57,10 +57,7 @@ def main():
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
 
     # heat map of all touches, set to 1 for indiv heat maps
-    player_pos = pl.heat_map(df_event,player_list,player_initials,1)
-
-    plt.show()
-    sys.exit()
+    player_pos = pl.heat_map(df_event,player_list,player_initials)
 
     # pass lists and map, set to 1 for indiv pass maps
     pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
