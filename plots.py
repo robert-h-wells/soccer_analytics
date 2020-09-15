@@ -217,7 +217,7 @@ def indiv_pass_map(pass_data,player_list,type_val):
         sns.kdeplot(x_coord, y_coord, shade = "True", color = "green", n_levels = 30)
 
         plt.title(player_list[ii][1])
-        plt.ylim(0, 80)
+        plt.ylim(80, 0)
         plt.xlim(0, 120)
 
     plt.show()
@@ -259,10 +259,28 @@ def heat_map(df,player_list,initials,type_val):
 
             sns.kdeplot(x_coord, y_coord, shade = "True", color = "blue", n_levels = 30)
             plt.plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+
+            # Should set up a function for this!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            # K-means
+            X = list(zip(x_coord,y_coord))
+            from sklearn.cluster import KMeans
+            from sklearn.metrics import silhouette_score
+
+            chosen = 0 ; chosen_score = 0.0
+            for j in range(2,6):
+                kmeans = KMeans(n_clusters=j, random_state=42).fit(X)
+                if silhouette_score(X, kmeans.labels_) > chosen_score:
+                    chosen_score = silhouette_score(X, kmeans.labels_)
+                    chosen = j
+
+            kmeans = KMeans(n_clusters=chosen, random_state=42).fit(X)
+            plot_centroids(kmeans.cluster_centers_)
             
             plt.title(player_list[ii][1])
-            plt.ylim(0, 80)
+            plt.ylim(80, 0)
             plt.xlim(0, 120)
+
+    # Should also think about K-Means for multiple positions !!!!
 
     # Map of all players average positions
     fig, ax = plt.subplots()
@@ -270,11 +288,14 @@ def heat_map(df,player_list,initials,type_val):
     plt.ylim(100, -10)
     plt.title('Starting XI Heat Map')
 
-    for ii in range(10):
+    for ii in range(11):
         X1 = player_pos[ii][0]
         Y1 = player_pos[ii][1]
         plt.plot(X1,Y1,'o',color='red',markersize=20)
         plt.text(X1-3.5,Y1+2,initials[ii],fontsize=14)
+
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
 
     return(player_pos)
 #===============================================================================================#
@@ -318,7 +339,7 @@ def pass_network(pass_data,player_list,player_pos):
         sns.kdeplot(x_coord, y_coord, shade = "True", color = "green", n_levels = 30)
 
         plt.title(player_list[ii][1])
-        plt.ylim(0, 80)
+        plt.ylim(80, 0)
         plt.xlim(0, 120)
 
 

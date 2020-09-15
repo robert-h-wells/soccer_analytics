@@ -56,10 +56,13 @@ def main():
     # list of each player and event in each possession pathway
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
 
-    # heat map of all touches
-    player_pos = pl.heat_map(df_event,player_list,player_initials,0)
+    # heat map of all touches, set to 1 for indiv heat maps
+    player_pos = pl.heat_map(df_event,player_list,player_initials,1)
 
-    # pass lists and map
+    plt.show()
+    sys.exit()
+
+    # pass lists and map, set to 1 for indiv pass maps
     pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
     #pl.indiv_pass_map(pass_data,player_list,0)
     pl.pass_network(pass_data,player_list,player_pos)
@@ -126,7 +129,8 @@ def main():
         plt.ylim(100, -10)
         pl.plot_pass_path(chosen_data,sort_poss_list[ii][0],sort_poss_list[ii][1])
 
-        #plt.gca().invert_yaxis()
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
         plt.show()
 #=========================================================================================================================#
 
