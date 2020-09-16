@@ -354,10 +354,10 @@ def pass_network(pass_data,player_list,player_pos):
     plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
     fig.delaxes(ax[3][2])
 #===============================================================================================#
-def pass_map(pass_data_recip,player_list,player_pos):
+def pass_map(pass_data_recip,player_list,player_pos,initials):
 
-    print(pass_data_recip[0])
-    print(player_pos[0])
+    print(len(player_pos))
+    print(len(initials))
 
     #for i in range(len(pass_data)):
     for i in range(1,2):
@@ -366,14 +366,17 @@ def pass_map(pass_data_recip,player_list,player_pos):
         draw_pitch(ax)
         plt.ylim(100, -10)
 
-        for j in range(len(player_pos)):
+        for j in range(len(player_pos)-1):
 
-            plt.plot(player_pos[j][0],player_pos[j][1],'o',color='red')
+            X1 = player_pos[j][0]
+            Y1 = player_pos[j][1]
+
+            plt.plot(X1,Y1,'o',color='red',markersize=20)
+            plt.text(X1-3.5,Y1+2,initials[j],fontsize=14)
 
             if i != j:
 
-                ax.annotate("", xy = (player_pos[j][0],player_pos[j][1]), 
-                                xycoords = 'data',xytext = (player_pos[i][0], 
+                ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
                                 player_pos[i][1]), textcoords = 'data',
                                 arrowprops=dict(arrowstyle='->',
                                 connectionstyle="arc3", color = 'blue'),) 
