@@ -57,12 +57,15 @@ def main():
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
 
     # heat map of all touches, set to 1 for indiv heat maps
-    player_pos = pl.heat_map(df_event,player_list,player_initials)
+    player_pos = tl.get_touch_data(df_event,player_list)
+    #pl.heat_map(df_event,player_list,player_pos)
+    pl.team_heat_map(player_pos,player_initials)
 
     # pass lists and map, set to 1 for indiv pass maps
     pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
-    #pl.indiv_pass_map(pass_data,player_list,0)
-    pl.pass_network(pass_data,player_list,player_pos)
+    #pl.indiv_pass_map(pass_data,player_list,1)
+    #pl.pass_network(pass_data,player_list,player_pos)
+    pl.pass_map(pass_data_recip,player_list,player_pos)
     plt.show()
 
     sys.exit()

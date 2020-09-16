@@ -240,10 +240,9 @@ def plot_centroids(centroids, ax, weights=None):
                 #marker='d', s=16, linewidths=12,
                 #color=cross_color, zorder=11, alpha=1)
 #===============================================================================================#
-def heat_map(df,player_list,initials):
+def heat_map(df,player_list,player_pos):
     "Heat map of all player touches."
 
-    player_pos = []
     num = 12
     fig, ax = plt.subplots(int(num/3),3)
     fig.set_size_inches(18.0, 10.0)
@@ -267,9 +266,6 @@ def heat_map(df,player_list,initials):
         x_coord = [i[0] for i in df_player["location"]]
         y_coord = [i[1] for i in df_player["location"]]
 
-        # Find average of all events
-        player_pos.append([np.mean(x_coord),np.mean(y_coord)])
-
         draw_pitch(ax[val1,val2])
         plt.ylim(100, -10)
 
@@ -290,8 +286,10 @@ def heat_map(df,player_list,initials):
             
     plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
     fig.delaxes(ax[3][2])
-
+#===============================================================================================#
+def team_heat_map(player_pos,initials):
     # Map of all players average positions
+
     fig, ax = plt.subplots()
     draw_pitch(ax)
     plt.ylim(100, -10)
@@ -306,7 +304,6 @@ def heat_map(df,player_list,initials):
         plt.ylim(80, 0)
         plt.xlim(0, 120)
 
-    return(player_pos)
 #===============================================================================================#
 def pass_network(pass_data,player_list,player_pos):
     """
@@ -356,7 +353,34 @@ def pass_network(pass_data,player_list,player_pos):
 
     plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
     fig.delaxes(ax[3][2])
+#===============================================================================================#
+def pass_map(pass_data_recip,player_list,player_pos):
 
+    print(pass_data_recip[0])
+    print(player_pos[0])
+
+    #for i in range(len(pass_data)):
+    for i in range(1,2):
+
+        fig, ax = plt.subplots()
+        draw_pitch(ax)
+        plt.ylim(100, -10)
+
+        for j in range(len(player_pos)):
+
+            plt.plot(player_pos[j][0],player_pos[j][1],'o',color='red')
+
+            if i != j:
+
+                ax.annotate("", xy = (player_pos[j][0],player_pos[j][1]), 
+                                xycoords = 'data',xytext = (player_pos[i][0], 
+                                player_pos[i][1]), textcoords = 'data',
+                                arrowprops=dict(arrowstyle='->',
+                                connectionstyle="arc3", color = 'blue'),) 
+
+        plt.title(player_list[i][1])
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
 
 #===============================================================================================#
 def plot_pass_path(data,start_val,end_val):

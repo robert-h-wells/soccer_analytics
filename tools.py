@@ -43,7 +43,10 @@ def get_poss_player_list(data):
     return(poss_list, player_list)
 #===============================================================================================#
 def get_poss_data(data,poss_list,player_list):
-    # create lists of each player and each event that occurs along each pathways
+    """ 
+    Create lists of each player and each event that occurs along each pathways.
+    Also want to find the average position of each player based on all touches.
+    """
 
     poss_data = []
     poss_name_data = []
@@ -61,6 +64,7 @@ def get_poss_data(data,poss_list,player_list):
 
                     new_list.append([data[j]['player']['id'],data[j]['type']['id']])
                     new_name_list.append([data[j]['player']['name'],data[j]['type']['name']])
+            
             except KeyError:
                 pass
 
@@ -68,6 +72,25 @@ def get_poss_data(data,poss_list,player_list):
         poss_name_data[i] = new_name_list
 
     return(poss_data, poss_name_data)
+#===============================================================================================#
+def get_touch_data(df,player_list):
+    # Get average position of each player based on touch
+
+    # Average position 
+    player_pos = []
+    for ii in range(len(player_list)):
+
+        df_player = df[df["player_name"] == player_list[ii][1]]
+        df_player = df_player.dropna(subset=["location"])
+
+        # Locations of all events from player
+        x_coord = [i[0] for i in df_player["location"]]
+        y_coord = [i[1] for i in df_player["location"]]
+
+        # Find average of all events
+        player_pos.append([np.mean(x_coord),np.mean(y_coord)])
+
+    return(player_pos)
 #===============================================================================================#
 def get_path_pos(data,poss_list):
     # get the starting position of each pathway and assign value
