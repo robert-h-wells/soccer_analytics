@@ -354,13 +354,14 @@ def pass_network(pass_data,player_list,player_pos):
     plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
     fig.delaxes(ax[3][2])
 #===============================================================================================#
-def pass_map(pass_data_recip,player_list,player_pos,initials):
-
-    print(len(player_pos))
-    print(len(initials))
+def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
 
     #for i in range(len(pass_data)):
     for i in range(1,2):
+
+        list_val = [j[0] for j in pass_data_recip[i]]
+        check_list = [j for j in pass_data_recip[i]]
+        sort_list_val = sorted(check_list, key=lambda x:x[0],reverse=True)
 
         fig, ax = plt.subplots()
         draw_pitch(ax)
@@ -374,12 +375,22 @@ def pass_map(pass_data_recip,player_list,player_pos,initials):
             plt.plot(X1,Y1,'o',color='red',markersize=20)
             plt.text(X1-3.5,Y1+2,initials[j],fontsize=14)
 
-            if i != j:
+        # Number of connections to find
+        for j in range(n_connect):
 
-                ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
-                                player_pos[i][1]), textcoords = 'data',
-                                arrowprops=dict(arrowstyle='->',
-                                connectionstyle="arc3", color = 'blue'),) 
+            # Find the correct player value
+            for k in range(len(player_list)):
+
+                if player_list[k][1] == sort_list_val[j][1]:
+
+                    X1 = player_pos[k][0]
+                    Y1 = player_pos[k][1]
+
+                    ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
+                                    player_pos[i][1]), textcoords = 'data',
+                                    arrowprops=dict(arrowstyle='->',
+                                    linewidth=10*sort_list_val[j][0]/sum(list_val),
+                                    connectionstyle="arc3", color = 'blue'),) 
 
         plt.title(player_list[i][1])
         plt.ylim(80, 0)

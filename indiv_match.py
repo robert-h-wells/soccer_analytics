@@ -65,7 +65,7 @@ def main():
     pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
     #pl.indiv_pass_map(pass_data,player_list,1)
     #pl.pass_network(pass_data,player_list,player_pos)
-    pl.pass_map(pass_data_recip,player_list,player_pos,player_initials)
+    pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
     plt.show()
 
     sys.exit()
