@@ -57,14 +57,14 @@ def main():
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
 
     # heat map of all touches, set to 1 for indiv heat maps
-    player_pos = tl.get_touch_data(df_event,player_list)
-    #pl.heat_map(df_event,player_list,player_pos)
+    player_pos, touch_cluster = tl.get_touch_data(df_event,player_list)
+    pl.heat_map(df_event,player_list,player_pos,touch_cluster)
     pl.team_heat_map(player_pos,player_initials)
 
     # pass lists and map, set to 1 for indiv pass maps
-    pass_data, pass_data_recip = tl.get_pass_data(player_list,df_event)
+    pass_data, pass_data_recip, pass_cluster = tl.get_pass_data(player_list,df_event)
     #pl.indiv_pass_map(pass_data,player_list,1)
-    #pl.pass_network(pass_data,player_list,player_pos)
+    pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
     pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
 
     # TO-DO: from the cluster analysis, identify zones of play for the team during a game 

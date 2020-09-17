@@ -240,7 +240,7 @@ def plot_centroids(centroids, ax, weights=None):
                 #marker='d', s=16, linewidths=12,
                 #color=cross_color, zorder=11, alpha=1)
 #===============================================================================================#
-def heat_map(df,player_list,player_pos):
+def heat_map(df,player_list,player_pos,touch_cluster):
     "Heat map of all player touches."
 
     num = 12
@@ -275,16 +275,15 @@ def heat_map(df,player_list,player_pos):
         # Average position
         ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
 
-        # K-means to find clusters
-        X = list(zip(x_coord,y_coord))
-        kmeans = ml.find_cluster(X,[2,6])
-        plot_centroids(kmeans.cluster_centers_,ax[val1,val2])
+        # Plot clusters of position 
+        plot_centroids(touch_cluster[ii],ax[val1,val2])
         
         ax[val1,val2].set_title(player_list[ii][1])
         ax[val1,val2].set_ylim(80, 0)
         ax[val1,val2].set_xlim(0, 120)
             
     plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
+    plt.suptitle('Heat Map for Touches')
     fig.delaxes(ax[3][2])
 #===============================================================================================#
 def team_heat_map(player_pos,initials):
@@ -305,7 +304,7 @@ def team_heat_map(player_pos,initials):
         plt.xlim(0, 120)
 
 #===============================================================================================#
-def pass_network(pass_data,player_list,player_pos):
+def pass_network(pass_data,player_list,player_pos,pass_cluster):
     """
     More complex version of indiv_pass_map. Will include clustering to find multiple average
     positions of areas where passes began.
@@ -342,16 +341,15 @@ def pass_network(pass_data,player_list,player_pos):
         # Average position
         ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
 
-        # K-means to get clusters
-        X = list(zip(x_coord,y_coord))
-        kmeans = ml.find_cluster(X,[2,6])
-        plot_centroids(kmeans.cluster_centers_,ax[val1,val2])
+        # Plot clusters
+        plot_centroids(pass_cluster[ii],ax[val1,val2])
 
         ax[val1,val2].set_title(player_list[ii][1])
         ax[val1,val2].set_ylim(80, 0)
         ax[val1,val2].set_xlim(0, 120)
 
     plt.tight_layout(pad=0.5, w_pad=3.0, h_pad=0.5)
+    plt.suptitle('Heat Map for Passes')
     fig.delaxes(ax[3][2])
 #===============================================================================================#
 def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
@@ -397,11 +395,13 @@ def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
                     Y1 = player_pos[index_val][1]
 
                     # Need to make linewidth's more exagerrated, hard to tell
+                    gray_map = plt.cm.gray
+                    norm_val = (list_val[j]-mean_val)/(max_val-mean_val)
                     ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
                                     player_pos[i][1]), textcoords = 'data',
                                     arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
-                                    linewidth=10*(list_val[j]-mean_val)/(max_val-mean_val),
-                                    connectionstyle="arc3",color = 'grey'),)  # color = 'blue'
+                                    linewidth=8*norm_val,
+                                    connectionstyle="arc3",color = gray_map(1.0-norm_val)),)  # color = 'blue'
 
         plt.title('Pass Map')
         plt.ylim(80, 0)

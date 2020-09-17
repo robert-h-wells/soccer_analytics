@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import json
 
 import plots as pl
+import ml_tools as ml
 #===============================================================================================#
 def get_poss_player_list(data):
     # from data, determine start and end data points for each possession pathway 
@@ -74,10 +75,13 @@ def get_poss_data(data,poss_list,player_list):
     return(poss_data, poss_name_data)
 #===============================================================================================#
 def get_touch_data(df,player_list):
-    # Get average position of each player based on touch
-
-    # Average position 
+    """ 
+    Get average position of each player based on touch.
+    Also use K-Means to get cluster position of each player.
+    """
+ 
     player_pos = []
+    touch_cluster = []
     for ii in range(len(player_list)):
 
         df_player = df[df["player_name"] == player_list[ii][1]]
@@ -90,7 +94,12 @@ def get_touch_data(df,player_list):
         # Find average of all events
         player_pos.append([np.mean(x_coord),np.mean(y_coord)])
 
-    return(player_pos)
+        # K-means to find clusters
+        X = list(zip(x_coord,y_coord))
+        kmeans = ml.find_cluster(X,[2,6])
+        touch_cluster.append(kmeans.cluster_centers_)
+
+    return(player_pos,touch_cluster)
 #===============================================================================================#
 def get_path_pos(data,poss_list):
     # get the starting position of each pathway and assign value
@@ -313,7 +322,6 @@ def get_path_score(data,poss_list):
             print('val+1',data[val+1])
             print('========================================================')
 
-
     return(poss_score)
 #===============================================================================================#
 def get_indiv_score(player_list,poss_data,poss_score):
@@ -428,11 +436,18 @@ def get_percent_poss_score(values_all,values_total):
     return(percent_poss_score)    
 #===============================================================================================#
 def get_pass_data(player_list,df):
+    """
+    Get details of passes from each player. Find recipients of their passes.
+    Also use K-Means to determine the passing clusters for the player to get
+    a more accurate representation of where their average passing positions occur.
+    """
 
+    # Find all events of passing for each player
     pass_data = []
     for i in player_list:
         pass_data.append(df[(df['player_name'] == i[1]) & (df['type_name'] == 'Pass')])
 
+    # Find recipients of each passing event
     pass_data_recip = []
     for i in range(len(pass_data)):
         lister = list(pass_data[i]['pass_recipient_name'])
@@ -440,7 +455,19 @@ def get_pass_data(player_list,df):
         zip_val = [j for j in zip(val,list(set(lister)))]
         pass_data_recip.append(zip_val)
 
-    return(pass_data,pass_data_recip)
+    # Find centroids of passing through K-Means
+    pass_cluster = []
+    for ii in range(len(pass_data)):
+
+        x_coord = [i[0] for i in pass_data[ii]["location"]] 
+        y_coord = [i[1] for i in pass_data[ii]["location"]]
+
+        # K-means to get clusters
+        X = list(zip(x_coord,y_coord))
+        kmeans = ml.find_cluster(X,[2,5])
+        pass_cluster.append(kmeans.cluster_centers_)
+
+    return(pass_data,pass_data_recip,pass_cluster)
 #===============================================================================================#
 def copy_files_tools(match_data):
     """ Copy files from source ot game_data folder """
