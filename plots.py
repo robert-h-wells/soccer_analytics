@@ -357,7 +357,6 @@ def pass_network(pass_data,player_list,player_pos):
 def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
 
     # Need to decide if i want to show connections based on median val or based on n_connect
-    # Plot looks ugly right now, but it does what I want
 
     mean_val = round(np.median(list([y[0] for x in pass_data_recip for y in x])))
     max_val = int(np.max(list([y[0] for x in pass_data_recip for y in x])))
@@ -367,7 +366,6 @@ def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
     draw_pitch(ax)
     plt.ylim(100, -10)
 
-    #for i in range(len(pass_data)):
     for i in range(11):
 
         list_val = [j[0] for j in pass_data_recip[i]]
@@ -398,21 +396,12 @@ def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
                     X1 = player_pos[index_val][0]
                     Y1 = player_pos[index_val][1]
 
-                    # Can Keep improving looks, have two options right now
                     # Need to make linewidth's more exagerrated, hard to tell
-
-
                     ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
                                     player_pos[i][1]), textcoords = 'data',
-                                    arrowprops=dict(arrowstyle='->',head_width=10,
+                                    arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
                                     linewidth=10*(list_val[j]-mean_val)/(max_val-mean_val),
                                     connectionstyle="arc3",color = 'grey'),)  # color = 'blue'
-
-                    #import matplotlib.patches as mpatches
-                    #style="Simple,head_length=20,head_width=28,tail_width=10"
-                    #arrow = mpatches.FancyArrowPatch((X1,Y1), (player_pos[i][0],
-                    #    player_pos[i][1]), arrowstyle=style,color='grey')
-                    #plt.gca().add_patch(arrow)
 
         plt.title('Pass Map')
         plt.ylim(80, 0)

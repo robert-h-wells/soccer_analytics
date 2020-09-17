@@ -66,6 +66,8 @@ def main():
     #pl.indiv_pass_map(pass_data,player_list,1)
     #pl.pass_network(pass_data,player_list,player_pos)
     pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
+
+    # TO-DO: from the cluster analysis, identify zones of play for the team during a game 
     plt.show()
 
     sys.exit()
