@@ -356,16 +356,27 @@ def pass_network(pass_data,player_list,player_pos):
 #===============================================================================================#
 def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
 
+    # Need to decide if i want to show connections based on median val or based on n_connect
+    # Plot looks ugly right now, but it does what I want
+
+    mean_val = round(np.median(list([y[0] for x in pass_data_recip for y in x])))
+    max_val = int(np.max(list([y[0] for x in pass_data_recip for y in x])))
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches(18.0, 10.0)
+    draw_pitch(ax)
+    plt.ylim(100, -10)
+
     #for i in range(len(pass_data)):
-    for i in range(1,2):
+    for i in range(11):
 
         list_val = [j[0] for j in pass_data_recip[i]]
         check_list = [j for j in pass_data_recip[i]]
         sort_list_val = sorted(check_list, key=lambda x:x[0],reverse=True)
 
-        fig, ax = plt.subplots()
-        draw_pitch(ax)
-        plt.ylim(100, -10)
+        #fig, ax = plt.subplots()
+        #draw_pitch(ax)
+        #plt.ylim(100, -10)
 
         for j in range(len(player_pos)-1):
 
@@ -373,26 +384,37 @@ def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
             Y1 = player_pos[j][1]
 
             plt.plot(X1,Y1,'o',color='red',markersize=20)
-            plt.text(X1-3.5,Y1+2,initials[j],fontsize=14)
+            plt.text(X1-1,Y1,initials[j],fontsize=14)
 
         # Number of connections to find
-        for j in range(n_connect):
+        for j in range(len(pass_data_recip[i])):
+            player_list_nam = list(jj[1] for jj in player_list[:11])
 
-            # Find the correct player value
-            for k in range(len(player_list)):
+            if pass_data_recip[i][j][1] in player_list_nam:
+                index_val = player_list_nam.index(pass_data_recip[i][j][1])
 
-                if player_list[k][1] == sort_list_val[j][1]:
+                if pass_data_recip[i][j][0] > mean_val: 
 
-                    X1 = player_pos[k][0]
-                    Y1 = player_pos[k][1]
+                    X1 = player_pos[index_val][0]
+                    Y1 = player_pos[index_val][1]
+
+                    # Can Keep improving looks, have two options right now
+                    # Need to make linewidth's more exagerrated, hard to tell
+
 
                     ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
                                     player_pos[i][1]), textcoords = 'data',
-                                    arrowprops=dict(arrowstyle='->',
-                                    linewidth=10*sort_list_val[j][0]/sum(list_val),
-                                    connectionstyle="arc3", color = 'blue'),) 
+                                    arrowprops=dict(arrowstyle='->',head_width=10,
+                                    linewidth=10*(list_val[j]-mean_val)/(max_val-mean_val),
+                                    connectionstyle="arc3",color = 'grey'),)  # color = 'blue'
 
-        plt.title(player_list[i][1])
+                    #import matplotlib.patches as mpatches
+                    #style="Simple,head_length=20,head_width=28,tail_width=10"
+                    #arrow = mpatches.FancyArrowPatch((X1,Y1), (player_pos[i][0],
+                    #    player_pos[i][1]), arrowstyle=style,color='grey')
+                    #plt.gca().add_patch(arrow)
+
+        plt.title('Pass Map')
         plt.ylim(80, 0)
         plt.xlim(0, 120)
 
