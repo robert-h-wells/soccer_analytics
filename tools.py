@@ -469,6 +469,10 @@ def get_pass_data(player_list,df):
 
     return(pass_data,pass_data_recip,pass_cluster)
 #===============================================================================================#
+def cluster_data(pass_data,player_list,player_pos,pass_cluster):
+
+    pass
+#===============================================================================================#
 def copy_files_tools(match_data):
     """ Copy files from source ot game_data folder """
 
