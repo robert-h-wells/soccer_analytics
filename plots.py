@@ -339,10 +339,10 @@ def pass_network(pass_data,player_list,player_pos,pass_cluster):
         sns.kdeplot(x_coord,y_coord,shade = "True",color = "green",n_levels = 30,ax= ax[val1,val2])
 
         # Average position
-        ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+        #ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
 
         # Plot clusters
-        plot_centroids(pass_cluster[ii],ax[val1,val2])
+        plot_centroids(pass_cluster[ii][0],ax[val1,val2])
 
         ax[val1,val2].set_title(player_list[ii][1])
         ax[val1,val2].set_ylim(80, 0)
@@ -394,14 +394,14 @@ def pass_map(pass_data_recip,player_list,player_pos,initials,n_connect):
                     X1 = player_pos[index_val][0]
                     Y1 = player_pos[index_val][1]
 
-                    # Need to make linewidth's more exagerrated, hard to tell
+                    # Passing arrow
                     gray_map = plt.cm.gray
                     norm_val = (list_val[j]-mean_val)/(max_val-mean_val)
                     ax.annotate("", xy = (X1,Y1),xycoords = 'data',xytext = (player_pos[i][0], 
                                     player_pos[i][1]), textcoords = 'data',
                                     arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
                                     linewidth=8*norm_val,
-                                    connectionstyle="arc3",color = gray_map(1.0-norm_val)),)  # color = 'blue'
+                                    connectionstyle="arc3",color = gray_map(1.0-norm_val)),) 
 
         plt.title('Pass Map')
         plt.ylim(80, 0)

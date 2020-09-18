@@ -458,23 +458,165 @@ def get_pass_data(player_list,df):
     # Find centroids of passing through K-Means
     pass_cluster = []
     for ii in range(len(pass_data)):
+        lister = list(pass_data[ii]['pass_recipient_name'])
 
         x_coord = [i[0] for i in pass_data[ii]["location"]] 
         y_coord = [i[1] for i in pass_data[ii]["location"]]
 
         # K-means to get clusters
         X = list(zip(x_coord,y_coord))
-        kmeans = ml.find_cluster(X,[2,5])
-        pass_cluster.append(kmeans.cluster_centers_)
+        kmeans = ml.find_cluster(X,[3,5])
+        
+        # Separate passing data into each cluster
+        cluster_data = []
+        for j in range(len(kmeans.cluster_centers_)):
+            cluster_recip = [list(i) for i in pass_data_recip[ii]]
+            for jj in cluster_recip:
+                jj[0] = 0
+
+            # Find recipients for data in each cluster
+            for k in range(len(kmeans.labels_)):
+
+                if kmeans.labels_[k] == j:
+                    for x in cluster_recip:
+
+                        if x[1] == lister[k]:
+                            x[0] += 1
+
+            cluster_data.append(cluster_recip)
+            
+        pass_cluster.append([kmeans.cluster_centers_,cluster_data])
 
     return(pass_data,pass_data_recip,pass_cluster)
 #===============================================================================================#
 def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
-    pass
+    cluster_pos = [i[0] for i in pass_cluster]
+    cluster_recip = [i[1] for i in pass_cluster]
+
+    import itertools
+    check = list(itertools.chain(*cluster_recip))
+    check2 = list(itertools.chain(*check))
+    check3 = list([i[0] for i in check2])
+    #mean_val = round(np.median(check3))
+    mean_val = 3
+    max_val = int(np.max(check3))
+    print(mean_val,max_val)
+
+    attack_pos = []
+    defense_pos = []
+
+    # Need to get correct data for the special cases
+    # 0 and 2 wont work for attack and defense for arrow
+
+    # Find each player position
+    for i in range(11):
+
+        if i == 0:  # special case for Lehmann
+            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+            attack[0] = attack[1]
+
+            defense = attack
+
+        elif i == 2: # Kolo
+            attack = sorted(cluster_pos[i], key=lambda x:x[0])
+            defense = sorted(cluster_pos[i], key=lambda x:x[0])
+
+        elif i == 3: # Sol
+            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+            defense = sorted(cluster_pos[i], key=lambda x:x[1])
+
+        elif i == 9: # Bergkamp
+            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+            defense = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+            defense[0] = defense[1]
+
+        else: # sort by x axis
+            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+            defense = sorted(cluster_pos[i], key=lambda x:x[0])
+
+        attack_pos.append(attack)
+        defense_pos.append(defense)
+
+
+    # Attack Map
+    fig, ax = plt.subplots()
+    pl.draw_pitch(ax)
+    plt.ylim(100, -10)
+
+    for i in range(11):
+
+        X1 = attack_pos[i][0][0]
+        Y1 = attack_pos[i][0][1]
+        plt.plot(X1,Y1,'o',color='red',markersize=20)
+        plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
+
+        # Plot passing connections
+        for j in range(len(cluster_recip[i][0])):
+            player_list_nam = list(jj[1] for jj in player_list[:11])
+
+            if cluster_recip[i][0][j][1] in player_list_nam:
+                index_val = player_list_nam.index(cluster_recip[i][0][j][1])
+
+                if cluster_recip[i][0][j][0] > mean_val:
+
+                    X2 = attack_pos[index_val][0][0]
+                    Y2 = attack_pos[index_val][0][1]
+
+                    # Passing arrow
+                    gray_map = plt.cm.gray
+                    norm_val = (cluster_recip[i][0][j][0]-mean_val)/(max_val-mean_val)
+                    ax.annotate("", xy = (X2,Y2),xycoords = 'data',xytext = (X1, 
+                                    Y1), textcoords = 'data',
+                                    arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
+                                    linewidth=8*norm_val,
+                                    connectionstyle="arc3",color = gray_map(1.0-norm_val)),)
+
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
+        plt.title('Attacking Positions')
+
+
+    # Defensive Map
+    fig, ax = plt.subplots()
+    pl.draw_pitch(ax)
+    plt.ylim(100, -10)
+
+    for i in range(11):  
+
+        X1 = defense_pos[i][0][0]
+        Y1 = defense_pos[i][0][1]
+        plt.plot(X1,Y1,'o',color='red',markersize=20)
+        plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
+
+        # Plot passing connections
+        for j in range(len(cluster_recip[i][0])):
+            player_list_nam = list(jj[1] for jj in player_list[:11])
+
+            if cluster_recip[i][0][j][1] in player_list_nam:
+                index_val = player_list_nam.index(cluster_recip[i][0][j][1])
+
+                if cluster_recip[i][-1][j][0] > mean_val:
+
+                    X2 = defense_pos[index_val][0][0]
+                    Y2 = defense_pos[index_val][0][1]
+
+                    # Passing arrow
+                    gray_map = plt.cm.gray
+                    norm_val = (cluster_recip[i][-1][j][0]-mean_val)/(max_val-mean_val)
+                    ax.annotate("", xy = (X2,Y2),xycoords = 'data',xytext = (X1, 
+                                    Y1), textcoords = 'data',
+                                    arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
+                                    linewidth=8*norm_val,
+                                    connectionstyle="arc3",color = gray_map(1.0-norm_val)),)
+
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
+        plt.title('Defensive Positions')
+
 #===============================================================================================#
 def copy_files_tools(match_data):
-    """ Copy files from source ot game_data folder """
+    """ Copy files from source to game_data folder """
 
     for i in range(len(match_data)):
         if match_data[i]['home_team']['home_team_name'] == 'Arsenal':
