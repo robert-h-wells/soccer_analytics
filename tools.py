@@ -469,10 +469,16 @@ def get_pass_data(player_list,df):
         
         # Separate passing data into each cluster
         cluster_data = []
+        cluster_pass = []
         for j in range(len(kmeans.cluster_centers_)):
             cluster_recip = [list(i) for i in pass_data_recip[ii]]
             for jj in cluster_recip:
                 jj[0] = 0
+
+            # Want to separate data into each cluster
+            cluster_pass_ind = [index for index, value in enumerate(kmeans.labels_) if value == j]
+            cluster_pass_dat = ([X[z] for z in cluster_pass_ind])
+            cluster_pass.append(cluster_pass_dat)
 
             # Find recipients for data in each cluster
             for k in range(len(kmeans.labels_)):
@@ -485,7 +491,7 @@ def get_pass_data(player_list,df):
 
             cluster_data.append(cluster_recip)
             
-        pass_cluster.append([kmeans.cluster_centers_,cluster_data])
+        pass_cluster.append([kmeans.cluster_centers_,cluster_data,cluster_pass]) # cluster_pass
 
     return(pass_data,pass_data_recip,pass_cluster)
 #===============================================================================================#
@@ -493,6 +499,7 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
     cluster_pos = [i[0] for i in pass_cluster]
     cluster_recip = [i[1] for i in pass_cluster]
+    cluster_pass = [i[-1] for i in pass_cluster]
 
     import itertools
     check = list(itertools.chain(*cluster_recip))
@@ -503,8 +510,8 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
     max_val = int(np.max(check3))
     print(mean_val,max_val)
 
-    attack_pos = []
-    defense_pos = []
+    attack_pos = [] ; attack_val = []
+    defense_pos = [] ; defense_val = []
 
     # Need to get correct data for the special cases
     # 0 and 2 wont work for attack and defense for arrow
@@ -544,7 +551,7 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
     pl.draw_pitch(ax)
     plt.ylim(100, -10)
 
-    for i in range(11):
+    for i in range(1,11):
 
         X1 = attack_pos[i][0][0]
         Y1 = attack_pos[i][0][1]

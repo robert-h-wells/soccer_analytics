@@ -186,7 +186,7 @@ def get_path_pos_plot(path_start_val):
     #im = plt.contour(X,Y,Z,2,linewidths=0.5,colors='k')
     im = plt.contourf(X,Y,Z,3,cmap='RdGy')
     fig.colorbar(im)
-    plt.show()
+    #plt.show()
 #===============================================================================================#
 def indiv_pass_map(pass_data,player_list,type_val):
     """
@@ -195,7 +195,7 @@ def indiv_pass_map(pass_data,player_list,type_val):
     """
 
     #for ii in range(len(pass_data)):
-    for ii in range(1,2):
+    for ii in range(11):
         fig, ax = plt.subplots()
         draw_pitch(ax)
         plt.ylim(100, -10)
@@ -226,7 +226,7 @@ def indiv_pass_map(pass_data,player_list,type_val):
         plt.ylim(80, 0)
         plt.xlim(0, 120)
 
-    plt.show()
+    #plt.show()
 #===============================================================================================#
 def plot_centroids(centroids, ax, weights=None):
     "Plot centroids for K-means algorithm"
@@ -234,11 +234,29 @@ def plot_centroids(centroids, ax, weights=None):
     if weights is not None:
         centroids = centroids[weights > weights.max() / 10]
 
-    ax.scatter(centroids[:, 0], centroids[:, 1],
-                marker='d',s=24,linewidths=2,color='darkorange')
+    colors = ["darkorange","blue","red","fuchsia","grey"]
+    for i in range(len(centroids)):
+        ax.scatter(centroids[i, 0], centroids[i, 1],
+                    marker='d',s=24,linewidths=2, c=colors[i])
 
-                #marker='d', s=16, linewidths=12,
-                #color=cross_color, zorder=11, alpha=1)
+#===============================================================================================#
+def plot_centroids_passing(centroids,pass_dat, ax, weights=None):
+    "Plot centroids for K-means algorithm"
+
+
+    if weights is not None:
+        centroids = centroids[weights > weights.max() / 10]
+
+    colors = ["darkorange","blue","red","fuchsia","grey"]
+    for i in range(len(centroids)):
+        ax.scatter(centroids[i, 0], centroids[i, 1],
+                    marker='d',s=40,linewidths=3, c=colors[i])
+
+        X1 = [j[0] for j in pass_dat[i]]
+        Y1 = [j[1] for j in pass_dat[i]]
+
+        ax.plot(X1,Y1,'.',c=colors[i])
+                    
 #===============================================================================================#
 def heat_map(df,player_list,player_pos,touch_cluster):
     "Heat map of all player touches."
@@ -342,7 +360,8 @@ def pass_network(pass_data,player_list,player_pos,pass_cluster):
         #ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
 
         # Plot clusters
-        plot_centroids(pass_cluster[ii][0],ax[val1,val2])
+        #plot_centroids(pass_cluster[ii][0],ax[val1,val2])
+        plot_centroids_passing(pass_cluster[ii][0],pass_cluster[ii][-1],ax[val1,val2])
 
         ax[val1,val2].set_title(player_list[ii][1])
         ax[val1,val2].set_ylim(80, 0)
