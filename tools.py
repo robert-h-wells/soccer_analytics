@@ -509,10 +509,10 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
     combine2 = list(itertools.chain(*combine))
     combine3 = list([i[0] for i in combine2])
     #mean_val = round(np.median(check3))
-    mean_val = 3
-    max_val = int(np.max(combine3))
+    mean_val = 2
+    max_val = int(np.max(combine3))/2 
 
-    attack_pos = [] ; attack_val = []
+    attack_pos = [] ; attack_val = [] ; attack_recip = []
     defense_pos = [] ; defense_val = []
 
 
@@ -520,9 +520,11 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
     for i in range(11):
 
         # sort cluster and passing data by field progression
-        check = list(zip(cluster_pos[i],cluster_pass[i]))
-        attack, attack_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0], reverse=True))
-        defense, defense_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0]))
+        check = list(zip(cluster_pos[i],cluster_recip[i],cluster_pass[i]))
+        attack, recip_att, attack_dat = zip(*sorted([z for z in check], 
+                                            key=lambda z:z[0][0], reverse=True))
+        defense, defense_recip, defense_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0]))
+
 
         # Make sure clusters have enough data
         if len(attack_dat[0]) < 3:
@@ -566,6 +568,8 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
         attack_pos.append(attack)
         defense_pos.append(defense)
 
+        attack_recip.append(recip_att)
+
 
     # Attack Map
     fig, ax = plt.subplots()
@@ -574,31 +578,35 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
     for i in range(1,11):
 
-        X1 = attack_pos[i][attack_val[i]][0]   # attack_pos[i][0][0]
-        Y1 = attack_pos[i][attack_val[i]][1]   # attack_pos[i][0][1]
+        print(player_list[i][1],attack_recip[i][attack_val[i]]) 
+
+        X1 = attack_pos[i][attack_val[i]][0]  
+        Y1 = attack_pos[i][attack_val[i]][1]  
         plt.plot(X1,Y1,'o',color='red',markersize=20)
         plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
 
         # Plot passing connections
-        for j in range(len(cluster_recip[i][0])):
+        for j in range(len(attack_recip[i][0])):
             player_list_nam = list(jj[1] for jj in player_list[:11])
 
-            if cluster_recip[i][0][j][1] in player_list_nam:
-                index_val = player_list_nam.index(cluster_recip[i][0][j][1])
+            if attack_recip[i][attack_val[i]][j][1] in player_list_nam:
+                index_val = player_list_nam.index(attack_recip[i][attack_val[i]][j][1])
 
-                if cluster_recip[i][0][j][0] > mean_val:
+                if attack_recip[i][attack_val[i]][j][0] > mean_val:
 
-                    X2 = attack_pos[index_val][0][0]
-                    Y2 = attack_pos[index_val][0][1]
+                    X2 = attack_pos[index_val][attack_val[index_val]][0]
+                    Y2 = attack_pos[index_val][attack_val[index_val]][1]
 
                     # Passing arrow
                     gray_map = plt.cm.gray
-                    norm_val = (cluster_recip[i][0][j][0]-mean_val)/(max_val-mean_val)
+                    norm_val = (attack_recip[i][attack_val[i]][j][0]-mean_val)/(max_val-mean_val)
                     ax.annotate("", xy = (X2,Y2),xycoords = 'data',xytext = (X1, 
                                     Y1), textcoords = 'data',
                                     arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
                                     linewidth=8*norm_val,
                                     connectionstyle="arc3",color = gray_map(1.0-norm_val)),)
+
+        print()
 
         plt.ylim(80, 0)
         plt.xlim(0, 120)
