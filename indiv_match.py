@@ -63,7 +63,7 @@ def main():
     pass_data, pass_data_recip, pass_cluster = tl.get_pass_data(player_list,df_event)
     #pl.indiv_pass_map(pass_data,player_list,1)
     pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
-    #pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
+    pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
 
     tl.cluster_data(pass_data,player_list,player_pos,pass_cluster)
 

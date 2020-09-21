@@ -508,12 +508,13 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
     combine = list(itertools.chain(*cluster_recip))
     combine2 = list(itertools.chain(*combine))
     combine3 = list([i[0] for i in combine2])
-    #mean_val = round(np.median(check3))
-    mean_val = 2
-    max_val = int(np.max(combine3))/2 
-
+    mean_val = round(np.median(combine3))
+    print('mean',mean_val)
+    mean_val = 3
+    max_val = int(np.max(combine3))
+    min_val = int(np.min(combine3))
     attack_pos = [] ; attack_val = [] ; attack_recip = []
-    defense_pos = [] ; defense_val = []
+    defense_pos = [] ; defense_val = [] ; defense_recip = []
 
 
     # Find each player position
@@ -523,7 +524,7 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
         check = list(zip(cluster_pos[i],cluster_recip[i],cluster_pass[i]))
         attack, recip_att, attack_dat = zip(*sorted([z for z in check], 
                                             key=lambda z:z[0][0], reverse=True))
-        defense, defense_recip, defense_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0]))
+        defense, recip_def, defense_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0]))
 
 
         # Make sure clusters have enough data
@@ -569,6 +570,7 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
         defense_pos.append(defense)
 
         attack_recip.append(recip_att)
+        defense_recip.append(recip_def)
 
 
     # Attack Map
@@ -577,8 +579,6 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
     plt.ylim(100, -10)
 
     for i in range(1,11):
-
-        print(player_list[i][1],attack_recip[i][attack_val[i]]) 
 
         X1 = attack_pos[i][attack_val[i]][0]  
         Y1 = attack_pos[i][attack_val[i]][1]  
@@ -599,14 +599,15 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
                     # Passing arrow
                     gray_map = plt.cm.gray
-                    norm_val = (attack_recip[i][attack_val[i]][j][0]-mean_val)/(max_val-mean_val)
+                    norm_val = (attack_recip[i][attack_val[i]][j][0]-min_val)/(max_val-min_val)
+
                     ax.annotate("", xy = (X2,Y2),xycoords = 'data',xytext = (X1, 
                                     Y1), textcoords = 'data',
                                     arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
                                     linewidth=8*norm_val,
                                     connectionstyle="arc3",color = gray_map(1.0-norm_val)),)
+                                    # gray_map(1.0-norm_val))
 
-        print()
 
         plt.ylim(80, 0)
         plt.xlim(0, 120)
@@ -626,25 +627,28 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
         plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
 
         # Plot passing connections
-        for j in range(len(cluster_recip[i][0])):
+        for j in range(len(defense_recip[i][0])):
             player_list_nam = list(jj[1] for jj in player_list[:11])
 
-            if cluster_recip[i][0][j][1] in player_list_nam:
-                index_val = player_list_nam.index(cluster_recip[i][0][j][1])
+            if defense_recip[i][defense_val[i]][j][1] in player_list_nam:
+                index_val = player_list_nam.index(defense_recip[i][defense_val[i]][j][1])
 
-                if cluster_recip[i][-1][j][0] > mean_val:
+                #if cluster_recip[i][-1][j][0] > mean_val:
+                if defense_recip[i][defense_val[i]][j][0] > mean_val:
 
-                    X2 = defense_pos[index_val][0][0]
-                    Y2 = defense_pos[index_val][0][1]
+                    X2 = defense_pos[index_val][defense_val[index_val]][0]
+                    Y2 = defense_pos[index_val][defense_val[index_val]][1]
 
                     # Passing arrow
                     gray_map = plt.cm.gray
-                    norm_val = (cluster_recip[i][-1][j][0]-mean_val)/(max_val-mean_val)
+                    norm_val = (defense_recip[i][defense_val[i]][j][0]-min_val)/(max_val-min_val)
+
                     ax.annotate("", xy = (X2,Y2),xycoords = 'data',xytext = (X1, 
                                     Y1), textcoords = 'data',
                                     arrowprops=dict(arrowstyle='->,head_width=0.6,head_length=0.5',
                                     linewidth=8*norm_val,
                                     connectionstyle="arc3",color = gray_map(1.0-norm_val)),)
+                                    # gray_map(1.0-norm_val)
 
         plt.ylim(80, 0)
         plt.xlim(0, 120)
