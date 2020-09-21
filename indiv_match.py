@@ -65,7 +65,7 @@ def main():
     pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
     #pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
 
-    #tl.cluster_data(pass_data,player_list,player_pos,pass_cluster)
+    tl.cluster_data(pass_data,player_list,player_pos,pass_cluster)
 
 
 

@@ -491,56 +491,77 @@ def get_pass_data(player_list,df):
 
             cluster_data.append(cluster_recip)
             
-        pass_cluster.append([kmeans.cluster_centers_,cluster_data,cluster_pass]) # cluster_pass
+        pass_cluster.append([kmeans.cluster_centers_,cluster_data,cluster_pass])
 
     return(pass_data,pass_data_recip,pass_cluster)
 #===============================================================================================#
 def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
+    print('length',len(pass_cluster))
+
     cluster_pos = [i[0] for i in pass_cluster]
     cluster_recip = [i[1] for i in pass_cluster]
-    cluster_pass = [i[-1] for i in pass_cluster]
+    cluster_pass = [list(i[-1]) for i in pass_cluster]
 
+    # want to find median, max from all values so will combine arrays
     import itertools
-    check = list(itertools.chain(*cluster_recip))
-    check2 = list(itertools.chain(*check))
-    check3 = list([i[0] for i in check2])
+    combine = list(itertools.chain(*cluster_recip))
+    combine2 = list(itertools.chain(*combine))
+    combine3 = list([i[0] for i in combine2])
     #mean_val = round(np.median(check3))
     mean_val = 3
-    max_val = int(np.max(check3))
-    print(mean_val,max_val)
+    max_val = int(np.max(combine3))
 
     attack_pos = [] ; attack_val = []
     defense_pos = [] ; defense_val = []
 
-    # Need to get correct data for the special cases
-    # 0 and 2 wont work for attack and defense for arrow
 
     # Find each player position
     for i in range(11):
 
-        if i == 0:  # special case for Lehmann
-            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
-            attack[0] = attack[1]
+        # sort cluster and passing data by field progression
+        check = list(zip(cluster_pos[i],cluster_pass[i]))
+        attack, attack_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0], reverse=True))
+        defense, defense_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0]))
 
-            defense = attack
+        # Make sure clusters have enough data
+        if len(attack_dat[0]) < 3:
+            val_att = 1
+        else:
+            val_att = 0
 
-        elif i == 2: # Kolo
-            attack = sorted(cluster_pos[i], key=lambda x:x[0])
-            defense = sorted(cluster_pos[i], key=lambda x:x[0])
+        # If clusters are nearby, choose highest number of passes
+        for ii in range(len(attack)):
+            if ii != val_att:
+                if (abs(attack[val_att][0]-attack[ii][0]) < 10. 
+                    and len(attack_dat[ii]) > len(attack_dat[val_att])):
+                    val_att = ii 
 
-        elif i == 3: # Sol
-            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
-            defense = sorted(cluster_pos[i], key=lambda x:x[1])
+        attack_val.append(val_att)
 
-        elif i == 9: # Bergkamp
-            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
-            defense = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
-            defense[0] = defense[1]
+        # Same for defensive positions
+        if len(defense_dat[0]) < 3:
+            val_def = 1
+        else:
+            val_def = 0
 
-        else: # sort by x axis
-            attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
-            defense = sorted(cluster_pos[i], key=lambda x:x[0])
+        # If clusters are nearby, choose highest number of passes
+        for ii in range(len(defense)):
+            if ii != val_def:
+                if (abs(defense[val_def][0]-defense[ii][0]) < 10. 
+                    and len(defense_dat[ii]) > len(defense_dat[val_def])):
+                    val_def = ii 
+
+        defense_val.append(val_def)
+
+        
+        if 1==0:
+            # Not included yet
+            if i == 0:  # special case for Lehmann
+                attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+                attack[0] = attack[1]
+
+                defense = attack
 
         attack_pos.append(attack)
         defense_pos.append(defense)
@@ -553,8 +574,8 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
     for i in range(1,11):
 
-        X1 = attack_pos[i][0][0]
-        Y1 = attack_pos[i][0][1]
+        X1 = attack_pos[i][attack_val[i]][0]   # attack_pos[i][0][0]
+        Y1 = attack_pos[i][attack_val[i]][1]   # attack_pos[i][0][1]
         plt.plot(X1,Y1,'o',color='red',markersize=20)
         plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
 
@@ -591,8 +612,8 @@ def cluster_data(pass_data,player_list,player_pos,pass_cluster):
 
     for i in range(11):  
 
-        X1 = defense_pos[i][0][0]
-        Y1 = defense_pos[i][0][1]
+        X1 = defense_pos[i][defense_val[i]][0]
+        Y1 = defense_pos[i][defense_val[i]][1]
         plt.plot(X1,Y1,'o',color='red',markersize=20)
         plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
 
