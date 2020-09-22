@@ -56,16 +56,18 @@ def main():
 
     # heat map of all touches
     player_pos, touch_cluster = tl.get_touch_data(df_event,player_list)
-    #pl.heat_map(df_event,player_list,player_pos,touch_cluster)
+    pl.heat_map(df_event,player_list,player_pos,touch_cluster)
     #pl.team_heat_map(player_pos,player_initials)
 
-    # pass lists and map, set to 1 for indiv pass maps
-    pass_data, pass_data_recip, pass_cluster = tl.get_pass_data(player_list,df_event)
-    #pl.indiv_pass_map(pass_data,player_list,1)
-    pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
-    pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
+    tl.cluster_touch_data(player_list,player_pos,touch_cluster)
 
-    tl.cluster_data(pass_data,player_list,player_pos,pass_cluster)
+    # pass lists and map, set to 1 for indiv pass maps
+    #pass_data, pass_data_recip, pass_cluster = tl.get_pass_data(player_list,df_event)
+    ##pl.indiv_pass_map(pass_data,player_list,1)
+    #pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
+    #pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
+
+    #tl.cluster_pass_data(pass_data,player_list,player_pos,pass_cluster)
 
 
 

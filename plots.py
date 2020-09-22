@@ -240,14 +240,13 @@ def plot_centroids(centroids, ax, weights=None):
                     marker='d',s=24,linewidths=2, c=colors[i])
 
 #===============================================================================================#
-def plot_centroids_passing(centroids,pass_dat, ax, weights=None):
+def plot_centroids_data(centroids,pass_dat, ax, weights=None):
     "Plot centroids for K-means algorithm"
-
 
     if weights is not None:
         centroids = centroids[weights > weights.max() / 10]
 
-    colors = ["darkorange","blue","red","fuchsia","grey"]
+    colors = ["darkorange","blue","red","fuchsia","grey","tan","lime"]
     for i in range(len(centroids)):
         ax.scatter(centroids[i, 0], centroids[i, 1],
                     marker='d',s=40,linewidths=3, c=colors[i])
@@ -288,13 +287,14 @@ def heat_map(df,player_list,player_pos,touch_cluster):
         plt.ylim(100, -10)
 
         # Heat map
-        sns.kdeplot(x_coord,y_coord,shade = "True",color = "blue",n_levels = 30,ax= ax[val1,val2])
+        sns.kdeplot(x_coord,y_coord,shade = "True",color = "green",n_levels = 30,ax= ax[val1,val2])
 
         # Average position
-        ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
+        #ax[val1,val2].plot(np.mean(x_coord),np.mean(y_coord),'^',color='red',markersize=14)
 
         # Plot clusters of position 
-        plot_centroids(touch_cluster[ii],ax[val1,val2])
+        #plot_centroids(touch_cluster[ii][0],ax[val1,val2])
+        plot_centroids_data(touch_cluster[ii][0],touch_cluster[ii][-1],ax[val1,val2])
         
         ax[val1,val2].set_title(player_list[ii][1])
         ax[val1,val2].set_ylim(80, 0)
@@ -361,7 +361,7 @@ def pass_network(pass_data,player_list,player_pos,pass_cluster):
 
         # Plot clusters
         #plot_centroids(pass_cluster[ii][0],ax[val1,val2])
-        plot_centroids_passing(pass_cluster[ii][0],pass_cluster[ii][-1],ax[val1,val2])
+        plot_centroids_data(pass_cluster[ii][0],pass_cluster[ii][-1],ax[val1,val2])
 
         ax[val1,val2].set_title(player_list[ii][1])
         ax[val1,val2].set_ylim(80, 0)

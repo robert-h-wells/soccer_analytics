@@ -96,8 +96,18 @@ def get_touch_data(df,player_list):
 
         # K-means to find clusters
         X = list(zip(x_coord,y_coord))
-        kmeans = ml.find_cluster(X,[2,6])
-        touch_cluster.append(kmeans.cluster_centers_)
+        kmeans = ml.find_cluster(X,[2,6])  # 6
+
+        # Separate touch data into each cluster
+        cluster_touch = []
+        for j in range(len(kmeans.cluster_centers_)):
+
+            # Find if touch in cluster
+            cluster_touch_ind = [index for index, value in enumerate(kmeans.labels_) if value == j]
+            cluster_touch_dat = ([X[z] for z in cluster_touch_ind])
+            cluster_touch.append(cluster_touch_dat)
+
+        touch_cluster.append([kmeans.cluster_centers_,cluster_touch])
 
     return(player_pos,touch_cluster)
 #===============================================================================================#
@@ -495,7 +505,104 @@ def get_pass_data(player_list,df):
 
     return(pass_data,pass_data_recip,pass_cluster)
 #===============================================================================================#
-def cluster_data(pass_data,player_list,player_pos,pass_cluster):
+def cluster_touch_data(player_list,player_pos,touch_cluster):
+
+    print('length',len(touch_cluster))
+
+    cluster_pos = [i[0] for i in touch_cluster]
+    cluster_touch = [list(i[-1]) for i in touch_cluster]
+
+    attack_pos = [] ; attack_val = []
+    defense_pos = [] ; defense_val = []
+
+    # Find each player position
+    for i in range(11):
+
+        # sort cluster and passing data by field progression
+        check = list(zip(cluster_pos[i],cluster_touch[i]))
+        attack, attack_dat = zip(*sorted([z for z in check], 
+                                            key=lambda z:z[0][0], reverse=True))
+        defense, defense_dat = zip(*sorted([z for z in check], key=lambda z:z[0][0]))
+
+
+        # Make sure clusters have enough data
+        if len(attack_dat[0]) < 7:
+            val_att = 1
+        else:
+            val_att = 0
+
+        # If clusters are nearby, choose highest number of touches
+        for ii in range(len(attack)):
+            if ii != val_att:
+                if (abs(attack[val_att][0]-attack[ii][0]) < 10. 
+                    and len(attack_dat[ii]) > len(attack_dat[val_att])):
+                    val_att = ii 
+
+        attack_val.append(val_att)
+
+        # Same for defensive positions
+        if len(defense_dat[0]) < 7:
+            val_def = 1
+        else:
+            val_def = 0
+
+        # If clusters are nearby, choose highest number of touches
+        for ii in range(len(defense)):
+            if ii != val_def:
+                if (abs(defense[val_def][0]-defense[ii][0]) < 10. 
+                    and len(defense_dat[ii]) > len(defense_dat[val_def])):
+                    val_def = ii 
+
+        defense_val.append(val_def)
+
+        
+        if 1==0:
+            # Not included yet
+            if i == 0:  # special case for Lehmann
+                attack = sorted(cluster_pos[i], key=lambda x:x[0], reverse=True)
+                attack[0] = attack[1]
+
+                defense = attack
+
+        attack_pos.append(attack)
+        defense_pos.append(defense)
+
+
+    # Attack Map
+    fig, ax = plt.subplots()
+    pl.draw_pitch(ax)
+    plt.ylim(100, -10)
+
+    for i in range(1,11):
+
+        X1 = attack_pos[i][attack_val[i]][0]  
+        Y1 = attack_pos[i][attack_val[i]][1]  
+        plt.plot(X1,Y1,'o',color='red',markersize=20)
+        plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
+
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
+        plt.title('Attacking Positions')
+
+
+    # Defensive Map
+    fig, ax = plt.subplots()
+    pl.draw_pitch(ax)
+    plt.ylim(100, -10)
+
+    for i in range(11):  
+
+        X1 = defense_pos[i][defense_val[i]][0]
+        Y1 = defense_pos[i][defense_val[i]][1]
+        plt.plot(X1,Y1,'o',color='red',markersize=20)
+        plt.text(X1-3.5,Y1+2,player_list[i][1],fontsize=8)
+
+        plt.ylim(80, 0)
+        plt.xlim(0, 120)
+        plt.title('Defensive Positions')
+
+#===============================================================================================#
+def cluster_pass_data(pass_data,player_list,player_pos,pass_cluster):
 
     print('length',len(pass_cluster))
 
