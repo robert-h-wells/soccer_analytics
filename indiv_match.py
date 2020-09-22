@@ -56,25 +56,17 @@ def main():
 
     # heat map of all touches
     player_pos, touch_cluster = tl.get_touch_data(df_event,player_list)
-    pl.heat_map(df_event,player_list,player_pos,touch_cluster)
+    #pl.heat_map(df_event,player_list,player_pos,touch_cluster)
     #pl.team_heat_map(player_pos,player_initials)
-
-    tl.cluster_touch_data(player_list,player_pos,touch_cluster)
+    #tl.cluster_touch_data(player_list,player_pos,touch_cluster)
 
     # pass lists and map, set to 1 for indiv pass maps
-    #pass_data, pass_data_recip, pass_cluster = tl.get_pass_data(player_list,df_event)
+    pass_data, pass_data_recip, pass_cluster = tl.get_pass_data(player_list,df_event)
     ##pl.indiv_pass_map(pass_data,player_list,1)
     #pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
     #pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
-
     #tl.cluster_pass_data(pass_data,player_list,player_pos,pass_cluster)
 
-
-
-    # TO-DO: from the cluster analysis, identify zones of play for the team during a game 
-    plt.show()
-
-    sys.exit()
 
     # Determine beginning location of paths -> sort based on y and x
     path_start_pos, path_start_val = tl.get_path_pos(chosen_data,poss_list)
@@ -124,12 +116,14 @@ def main():
     # find the percentage of each possesion point at pathway length and num players
     percent_poss_score = tl.get_percent_poss_score(values_all,values_total)
     #==================================================================================#
+
+    plt.show()
     
     # plot the possession by highest scoring pathways
     sort_poss_list = [x for _,x in sorted(zip(poss_score,poss_list), reverse=True)]
     sort_poss_score = sorted(poss_score, reverse=True)
 
-    for ii in range(0,2):
+    for ii in range(3,2):
         fig, ax=plt.subplots()
         pl.draw_pitch(ax)
         plt.ylim(100, -10)
