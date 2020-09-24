@@ -43,7 +43,7 @@ def ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam):
     # Make plots of the important attributes
     if 1==1:
 
-        if 1==0:  # Make 2 plots
+        if 1==1:  # Make 2 plots
 
             # score of each pathway vs. length of pathway 
             plot_data = [[],[],[]]
@@ -148,7 +148,7 @@ def ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam):
                 pl.get_ndim_plots([1,3],[3,3,3,],plot_data,title,xlabel,ylabel)
 
         # score based on events in pathway
-        if 1==0:
+        if 1==1:
 
             for i in range(len(event_nam)):
 

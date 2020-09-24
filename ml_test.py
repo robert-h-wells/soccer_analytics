@@ -12,15 +12,16 @@ import plots as pl
 
 def ml_models(df,df_nam,nam,event_nam):
 
-    checks = [2,6,7,9,10,11,12,13,23,24]
+    checks = [*range(len(df_nam)-1)] # [2,6,7,9,10,11,12,13,23,24]
     check_nam = [df_nam[i] for i in checks]
-    print(check_nam)
+    print('check',check_nam) ; print()
 
-    for i in range(len(checks)):
-        x2 = check_nam[i]
+    if 1==0:
+        for i in range(len(checks)):
+            x2 = check_nam[i]
 
-        print(x2,len(list(df['Score'] [(df['Score'] == 10) & (df[x2] == 1) ])),
-            len(list(df['Score'] [(df['Score'] != 10) & (df[x2] == 1) ])) )
+            print(x2,len(list(df['Score'] [(df['Score'] == 10) & (df[x2] == 1) ])),
+                len(list(df['Score'] [(df['Score'] != 10) & (df[x2] == 1) ])) )
 
     #X = df[df_nam[:-1]]
     X = df[check_nam]
@@ -32,7 +33,11 @@ def ml_models(df,df_nam,nam,event_nam):
     from sklearn.ensemble import RandomForestClassifier
 
     forest_clf = RandomForestClassifier()
+    #forest_clf.fit(X, target_10[0])
     forest_clf.fit(X, target_10[0])
+
+    #important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
+    #                    check_nam), reverse=True)
 
     important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
                         check_nam), reverse=True)

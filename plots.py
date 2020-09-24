@@ -82,8 +82,6 @@ def get_start_map(data):
         team.append([i['player']['id'],i['position']['id']])
         team_nam.append([i['player']['name'],i['position']['name']])
 
-    print(team_nam)
-
     # Position data for map
     pos_dat = [ [0,0], # N/A - 0 
         [5,40], # GK - 1
@@ -507,10 +505,11 @@ def get_ndim_plots(dim,plot_type,data,title,xlabel,ylabel):  # ,labels
                 ax[val].set_ylabel(ylabel[val])
 
             elif plot_type[val] == 3:  # scatter with color labels
-                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],alpha=0.5,
+                scatter = ax[val].scatter(data[val][0],data[val][1],c=data[val][2],alpha=0.8,
                     cmap=plt.get_cmap("seismic"),edgecolor='gray')
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
+                legend = ax[val].legend(*scatter.legend_elements())
 
             elif plot_type[val] == 4:  # scatter with color and size labels
 
@@ -518,11 +517,12 @@ def get_ndim_plots(dim,plot_type,data,title,xlabel,ylabel):  # ,labels
                 max_val = np.max(data[val][2])
                 min_val = np.min(data[val][2])-1
 
-                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],
+                scatter = ax[val].scatter(data[val][0],data[val][1],c=data[val][2],
                 s=200*(data[val][2]-min_val)/(max_val-min_val),edgecolor='gray',
-                    alpha=0.5,cmap=plt.get_cmap("seismic"))
+                    alpha=0.8,cmap=plt.get_cmap("seismic"))
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
+                legend = ax[val].legend(*scatter.legend_elements())
 
             val += 1
 

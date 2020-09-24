@@ -201,8 +201,8 @@ def get_path_score(data,poss_list):
 
                 if (i+1 == len(poss_list)):
                     poss_score[i] = 0
-                    print('last possesion')
-                    print(data[-1])
+                    #print('last possesion')
+                    #print(data[-1])
                 else:
                     poss2 = poss_list[i+1][1]-1 ; poss_val = data[val]['possession']
                     for ii in range(val,poss2):
@@ -507,8 +507,6 @@ def get_pass_data(player_list,df):
 #===============================================================================================#
 def cluster_touch_data(player_list,player_pos,touch_cluster):
 
-    print('length',len(touch_cluster))
-
     cluster_pos = [i[0] for i in touch_cluster]
     cluster_touch = [list(i[-1]) for i in touch_cluster]
 
@@ -604,19 +602,17 @@ def cluster_touch_data(player_list,player_pos,touch_cluster):
 #===============================================================================================#
 def cluster_pass_data(pass_data,player_list,player_pos,pass_cluster):
 
-    print('length',len(pass_cluster))
-
     cluster_pos = [i[0] for i in pass_cluster]
     cluster_recip = [i[1] for i in pass_cluster]
     cluster_pass = [list(i[-1]) for i in pass_cluster]
 
     # want to find median, max from all values so will combine arrays
+    # probably an easier way to do this
     import itertools
     combine = list(itertools.chain(*cluster_recip))
     combine2 = list(itertools.chain(*combine))
     combine3 = list([i[0] for i in combine2])
     mean_val = round(np.median(combine3))
-    print('mean',mean_val)
     mean_val = 3
     max_val = int(np.max(combine3))
     min_val = int(np.min(combine3))

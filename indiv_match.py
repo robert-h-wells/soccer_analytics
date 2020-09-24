@@ -24,6 +24,7 @@ def main():
     with open('game_data/44.json') as f:
         match_data = json.load(f)
 
+    match_data = sorted(match_data, key=lambda x:x['match_week'])
     # read in game file data
     data = []
     for i in range(len(match_data)):
@@ -49,8 +50,13 @@ def main():
         print(i,player_list[i][1])
 
     # map with starting XI positions and initials
-    # make sure the Arsenal team is chosen !!!
-    player_initials = pl.get_start_map(chosen_data[1])
+    if chosen_data[0]['team']['id'] == 1:
+        chosen = chosen_data[0]
+    else:
+        chosen = chosen_data[1]
+    
+    print(chosen['team']['name']) ; print('=============================')
+    player_initials = pl.get_start_map(chosen)
 
     # list of each player and event in each possession pathway
     poss_data, poss_name_data = tl.get_poss_data(chosen_data,poss_list,player_list)
@@ -120,7 +126,9 @@ def main():
     val_data = [values_length,values_num_players]
     list_data = [poss_list, player_list]
 
-    ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
+    #ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
+
+    mlt.ml_models(df,df_nam,nam,event_nam)
     #==================================================================================#
 
     plt.show()

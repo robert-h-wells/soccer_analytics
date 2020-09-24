@@ -113,7 +113,7 @@ def main():
 
   # Run machine learning tools
   if 1==1:
-    ml.mlt_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
+    ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
 
   # Run ML modeling
   if 1==1:
