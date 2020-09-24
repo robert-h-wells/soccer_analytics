@@ -172,7 +172,7 @@ def ml_models(df,df_nam,nam,event_nam):
 
     for i in range(len(checks)):
         x2 = check_nam[i]
-    #print([df[x2][df[x2] == 1 and df['Score'] == 10 ] ])
+
         print(x2,len(list(df['Score'] [(df['Score'] == 10) & (df[x2] == 1) ])),
             len(list(df['Score'] [(df['Score'] != 10) & (df[x2] == 1) ])) )
 

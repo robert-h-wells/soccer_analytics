@@ -76,6 +76,10 @@ def main():
 
     # determine pathway points for each possession
     poss_score = tl.get_path_score(chosen_data,poss_list)
+    print(poss_score)
+
+    plt.show()
+    sys.exit()
 
     # determine player score (sum of pathway score) and number of pathways they are in
     indiv_score, player_in_path, event_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)

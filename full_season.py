@@ -9,7 +9,7 @@ from shutil import copyfile
 
 import tools as tl
 import plots as pl
-import ml_test as ml
+import ml_test as mlt
 
 #=========================================================================================================================#
 
@@ -113,11 +113,11 @@ def main():
 
   # Run machine learning tools
   if 1==1:
-    ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
+    ml.mlt_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
 
   # Run ML modeling
   if 1==1:
-    ml.ml_models(df,df_nam,nam,event_nam)
+    ml.mlt_models(df,df_nam,nam,event_nam)
   
 #=========================================================================================================================#
 
