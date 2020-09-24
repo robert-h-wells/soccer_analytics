@@ -508,13 +508,19 @@ def get_ndim_plots(dim,plot_type,data,title,xlabel,ylabel):  # ,labels
 
             elif plot_type[val] == 3:  # scatter with color labels
                 ax[val].scatter(data[val][0],data[val][1],c=data[val][2],alpha=0.5,
-                    cmap=plt.get_cmap("jet"))
+                    cmap=plt.get_cmap("seismic"),edgecolor='gray')
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
 
             elif plot_type[val] == 4:  # scatter with color and size labels
-                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],s=data[val][2],
-                    alpha=0.5,cmap=plt.get_cmap("jet"))
+
+                # Normalize the size
+                max_val = np.max(data[val][2])
+                min_val = np.min(data[val][2])-1
+
+                ax[val].scatter(data[val][0],data[val][1],c=data[val][2],
+                s=200*(data[val][2]-min_val)/(max_val-min_val),edgecolor='gray',
+                    alpha=0.5,cmap=plt.get_cmap("seismic"))
                 ax[val].set_xlabel(xlabel[val])
                 ax[val].set_ylabel(ylabel[val])
 

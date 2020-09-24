@@ -10,7 +10,8 @@ from pandas import json_normalize
 
 import tools as tl
 import plots as pl
-import ml_test as ml
+import ml_test as mlt
+import ml_tools as ml
 #=========================================================================================================================#\
 
 def main():
@@ -76,10 +77,6 @@ def main():
 
     # determine pathway points for each possession
     poss_score = tl.get_path_score(chosen_data,poss_list)
-    print(poss_score)
-
-    plt.show()
-    sys.exit()
 
     # determine player score (sum of pathway score) and number of pathways they are in
     indiv_score, player_in_path, event_in_path = tl.get_indiv_score(player_list,poss_data,poss_score)
@@ -119,6 +116,11 @@ def main():
 
     # find the percentage of each possesion point at pathway length and num players
     percent_poss_score = tl.get_percent_poss_score(values_all,values_total)
+
+    val_data = [values_length,values_num_players]
+    list_data = [poss_list, player_list]
+
+    ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
     #==================================================================================#
 
     plt.show()

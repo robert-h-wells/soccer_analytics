@@ -117,7 +117,7 @@ def main():
 
   # Run ML modeling
   if 1==1:
-    ml.mlt_models(df,df_nam,nam,event_nam)
+    mlt.ml_models(df,df_nam,nam,event_nam)
   
 #=========================================================================================================================#
 
