@@ -65,7 +65,7 @@ def main():
     ##pl.indiv_pass_map(pass_data,player_list,1)
     #pl.pass_network(pass_data,player_list,player_pos,pass_cluster)
     #pl.pass_map(pass_data_recip,player_list,player_pos,player_initials,4)
-    #tl.cluster_pass_data(pass_data,player_list,player_pos,pass_cluster)
+    tl.cluster_pass_data(pass_data,player_list,player_pos,pass_cluster)
 
 
     # Determine beginning location of paths -> sort based on y and x
