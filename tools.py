@@ -758,6 +758,18 @@ def cluster_pass_data(pass_data,player_list,player_pos,pass_cluster):
         plt.ylim(80, 0)
         plt.xlim(0, 120)
         plt.title('Defensive Positions')
+#===============================================================================================#
+def match_statistics(df):
+    # Game statistics. Just total shots for now.
+
+    #for col in df.columns:
+    #    print(col)
+
+    shots = (df[(df['type_name'] == 'Shot') & 
+            (df['possession_team_name'] == 'Arsenal') &
+            (df['shot_outcome_name'] != 'Blocked')])
+    
+    print('Shots: ',shots['type_name'].count())
 
 #===============================================================================================#
 def copy_files_tools(match_data):

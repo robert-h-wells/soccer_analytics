@@ -38,7 +38,8 @@ def main():
             data.append(data2)
 
     # Make json and df of the game data
-    chosen_data = data[4]
+    chosen_match_val = 0
+    chosen_data = data[chosen_match_val]
     df_event = json_normalize(chosen_data, sep = "_")
     df_event = df_event.drop(columns=['id'])
 
@@ -50,12 +51,26 @@ def main():
         print(i,player_list[i][1])
 
     # map with starting XI positions and initials
-    if chosen_data[0]['team']['id'] == 1:
+    if chosen_data[0]['team']['id'] == 1:  # Home Team
         chosen = chosen_data[0]
-    else:
+        opponent = chosen_data[1]
+        scoreline = (str(match_data[chosen_match_val]['home_score'])+' - '
+                    +str(match_data[chosen_match_val]['away_score']))
+    else:           # Away Team
         chosen = chosen_data[1]
+        opponent = chosen_data[0]
+        scoreline = (str(match_data[chosen_match_val]['away_score'])+' - '
+                    +str(match_data[chosen_match_val]['home_score']))
     
-    print(chosen['team']['name']) ; print('=============================')
+    print() ; print('=============================')
+    print(chosen['team']['name']+' vs ' +opponent['team']['name'])  
+    print('{:^18s}'.format(scoreline))
+    print('=============================') ; print()
+
+    # Match statistics
+    tl.match_statistics(df_event)
+    sys.exit()
+
     player_initials = pl.get_start_map(chosen)
 
     # list of each player and event in each possession pathway
@@ -128,7 +143,7 @@ def main():
 
     #ml.ml_visual(df,val_data,percent_poss_score,list_data,nam,event_nam)
 
-    mlt.ml_models(df,df_nam,nam,event_nam)
+    #mlt.ml_models(df,df_nam,nam,event_nam)
     #==================================================================================#
 
     plt.show()

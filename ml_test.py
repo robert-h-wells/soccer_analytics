@@ -33,11 +33,8 @@ def ml_models(df,df_nam,nam,event_nam):
     from sklearn.ensemble import RandomForestClassifier
 
     forest_clf = RandomForestClassifier()
-    #forest_clf.fit(X, target_10[0])
+    #forest_clf.fit(X, target)
     forest_clf.fit(X, target_10[0])
-
-    #important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
-    #                    check_nam), reverse=True)
 
     important_param = sorted(zip([round(j,4) for j in forest_clf.feature_importances_],
                         check_nam), reverse=True)
