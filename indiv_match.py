@@ -38,14 +38,14 @@ def main():
             data.append(data2)
 
     # Make json and df of the game data
-    chosen_data = data[0]
+    chosen_data = data[4]
     df_event = json_normalize(chosen_data, sep = "_")
     df_event = df_event.drop(columns=['id'])
 
     # find data ranges of possession for each team and create list of players
     poss_list, player_list = tl.get_poss_player_list(chosen_data)
-    print('Number of players',len(player_list))
 
+    print('Number of players',len(player_list))
     for i in range(len(player_list)):
         print(i,player_list[i][1])
 

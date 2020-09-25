@@ -12,8 +12,8 @@ def get_poss_player_list(data):
     # determine all players in the full match
 
     switch = 0
-    prev_switch = 1
-    prev_poss = data[1]['possession']
+    prev_switch = 4
+    prev_poss = data[4]['possession']
     poss_list = []
     player_list = []
 
@@ -35,11 +35,12 @@ def get_poss_player_list(data):
                         data[i]['substitution']['replacement']['name']])
         
         elif data[i]['possession'] != data[i-1]['possession']:
-            switch += 1
-            if data[i-1]['possession_team']['name'] == 'Arsenal':
-                poss_list.append([prev_switch,i])
+            if i > 4:  # Data doesn't start until 5th data point
+                switch += 1
+                if data[i-1]['possession_team']['name'] == 'Arsenal':
+                    poss_list.append([prev_switch,i])
 
-            prev_switch = i
+                prev_switch = i
 
     return(poss_list, player_list)
 #===============================================================================================#
@@ -118,6 +119,7 @@ def get_path_pos(data,poss_list):
     path_start_val = []
 
     for i in range(len(poss_list)):
+
         path_start_pos.append(data[poss_list[i][0]]['location'])
         
         # Starting X position
