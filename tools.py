@@ -633,7 +633,7 @@ def cluster_pass_data(pass_data,player_list,player_pos,pass_cluster):
 
 
         # Make sure clusters have enough data
-        if len(attack_dat[0]) < 3:
+        if len(attack_dat[0]) < 5:
             val_att = 1
         else:
             val_att = 0
@@ -641,14 +641,14 @@ def cluster_pass_data(pass_data,player_list,player_pos,pass_cluster):
         # If clusters are nearby, choose highest number of passes
         for ii in range(len(attack)):
             if ii != val_att:
-                if (abs(attack[val_att][0]-attack[ii][0]) < 10. 
+                if (abs(attack[val_att][0]-attack[ii][0]) < 15. 
                     and len(attack_dat[ii]) > len(attack_dat[val_att])):
                     val_att = ii 
 
         attack_val.append(val_att)
 
         # Same for defensive positions
-        if len(defense_dat[0]) < 3:
+        if len(defense_dat[0]) < 4:
             val_def = 1
         else:
             val_def = 0
@@ -656,7 +656,7 @@ def cluster_pass_data(pass_data,player_list,player_pos,pass_cluster):
         # If clusters are nearby, choose highest number of passes
         for ii in range(len(defense)):
             if ii != val_def:
-                if (abs(defense[val_def][0]-defense[ii][0]) < 10. 
+                if (abs(defense[val_def][0]-defense[ii][0]) < 15. 
                     and len(defense_dat[ii]) > len(defense_dat[val_def])):
                     val_def = ii 
 
